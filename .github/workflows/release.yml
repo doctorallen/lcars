@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out merged source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Read release version
+        id: version
+        run: |
+          version="$(node -p "require('./package.json').version")"
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Verify version has not already been released
+        id: tag
+        env:
+          TAG_NAME: v${{ steps.version.outputs.value }}
+        run: |
+          if git rev-parse --verify --quiet "refs/tags/$TAG_NAME"; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build release VSIX
+        if: steps.tag.outputs.exists != 'true'
+        run: npm run package:vsix
+
+      - name: Create release and attach VSIX
+        if: steps.tag.outputs.exists != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: v${{ steps.version.outputs.value }}
+        run: |
+          vsix_path="$(find . -maxdepth 1 -type f -name '*.vsix' -print -quit)"
+          test -n "$vsix_path"
+          gh release create "$TAG_NAME" "$vsix_path" \
+            --generate-notes \
+            --target "$GITHUB_SHA" \
+            --title "LCARS $TAG_NAME" \
+            --repo "$GITHUB_REPOSITORY"

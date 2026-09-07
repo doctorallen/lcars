@@ -22,7 +22,12 @@ Extension Host development-path pattern used by Deckard:
 Package the extension with:
 
 ```sh
-npx @vscode/vsce package --no-dependencies
+npm ci
+npm run package:vsix
 ```
 
 Install the resulting VSIX through **Extensions: Install from VSIX...**.
+
+Pull requests and pushes to `master` are validated and packaged by GitHub
+Actions. A push to `master` creates a GitHub Release and attaches the VSIX
+when the version in `package.json` has not been released before.

@@ -146,8 +146,40 @@
       }
     },
     {
+      "name": "Control keywords",
+      "scope": [
+        "keyword.control",
+        "keyword.other",
+        "punctuation.definition.keyword"
+      ],
+      "settings": {
+        "foreground": "#BAA4E5"
+      }
+    },
+    {
+      "name": "Operators",
+      "scope": [
+        "keyword.operator",
+        "keyword.operator.assignment",
+        "keyword.operator.arithmetic",
+        "keyword.operator.comparison",
+        "keyword.operator.logical",
+        "keyword.operator.type"
+      ],
+      "settings": {
+        "foreground": "#41C4F7"
+      }
+    },
+    {
       "name": "Storage",
-      "scope": ["storage"],
+      "scope": ["storage", "token.storage"],
+      "settings": {
+        "foreground": "#41C4F7"
+      }
+    },
+    {
+      "name": "Storage modifiers",
+      "scope": ["storage.modifier"],
       "settings": {
         "foreground": "#41C4F7"
       }
@@ -157,20 +189,6 @@
       "scope": ["storage.type"],
       "settings": {
         "foreground": "#FF977B"
-      }
-    },
-    {
-      "name": "TypeScript private modifiers",
-      "scope": ["storage.modifier.private.ts"],
-      "settings": {
-        "foreground": "#BAA4E5"
-      }
-    },
-    {
-      "name": "TypeScript readonly modifiers",
-      "scope": ["storage.modifier.readonly.ts"],
-      "settings": {
-        "foreground": "#41C4F7"
       }
     },
     {
@@ -215,30 +233,72 @@
     },
     {
       "name": "Strings",
-      "scope": ["string", "constant.other.symbol", "markup.quoted"],
+      "scope": [
+        "string",
+        "constant.other.symbol",
+        "constant.regexp",
+        "markup.quoted"
+      ],
       "settings": {
         "foreground": "#FCC19F"
       }
     },
     {
       "name": "Numbers and constants",
-      "scope": ["constant.numeric", "constant.language", "constant.character", "constant.escape"],
+      "scope": [
+        "constant.numeric",
+        "constant.language",
+        "constant.character",
+        "constant.character.escape",
+        "constant.escape"
+      ],
       "settings": {
         "foreground": "#41C4F7"
       }
     },
     {
+      "name": "Named constants and enum members",
+      "scope": [
+        "entity.name.constant",
+        "variable.other.constant",
+        "variable.other.enummember"
+      ],
+      "settings": {
+        "foreground": "#EDB378"
+      }
+    },
+    {
       "name": "Variables",
-      "scope": ["variable", "support.other.variable", "variable.other"],
+      "scope": [
+        "variable",
+        "support.other.variable",
+        "variable.other",
+        "variable.other.readwrite",
+        "variable.instance"
+      ],
       "settings": {
         "foreground": "#41C4F7"
+      }
+    },
+    {
+      "name": "Language variables",
+      "scope": [
+        "variable.language",
+        "variable.language.this",
+        "variable.language.self",
+        "variable.language.super"
+      ],
+      "settings": {
+        "foreground": "#D2D5DF"
       }
     },
     {
       "name": "Function parameters",
       "scope": [
         "variable.parameter",
-        "variable.parameter.function"
+        "variable.parameter.function",
+        "entity.name.variable.parameter",
+        "function.parameter"
       ],
       "settings": {
         "foreground": "#41C4F7"
@@ -249,7 +309,9 @@
       "scope": [
         "variable.other.property",
         "variable.other.object.property",
+        "support.variable.property",
         "meta.property-name",
+        "meta.object-literal.key",
         "support.type.property-name"
       ],
       "settings": {
@@ -258,14 +320,33 @@
     },
     {
       "name": "Functions",
-      "scope": ["entity.name.function", "variable.function"],
+      "scope": [
+        "entity.name.function",
+        "entity.name.function.method",
+        "entity.name.function.constructor",
+        "variable.function"
+      ],
       "settings": {
         "foreground": "#BAA4E5"
       }
     },
     {
       "name": "Library functions",
-      "scope": ["support.function"],
+      "scope": [
+        "support.function",
+        "support.function.construct",
+        "keyword.other.special-method"
+      ],
+      "settings": {
+        "foreground": "#EDB378"
+      }
+    },
+    {
+      "name": "Library constants and variables",
+      "scope": [
+        "support.constant",
+        "support.variable"
+      ],
       "settings": {
         "foreground": "#EDB378"
       }
@@ -275,7 +356,8 @@
       "scope": [
         "meta.decorator",
         "entity.name.function.decorator",
-        "entity.name.function.decorator.ts"
+        "entity.name.function.decorator.ts",
+        "support.token.decorator"
       ],
       "settings": {
         "foreground": "#BAA4E5"
@@ -283,7 +365,12 @@
     },
     {
       "name": "Types",
-      "scope": ["entity.name.type", "support.type"],
+      "scope": [
+        "entity.name.type",
+        "entity.name.type.type-parameter",
+        "support.type",
+        "support.type.primitive"
+      ],
       "settings": {
         "foreground": "#EDB378"
       }
@@ -292,8 +379,20 @@
       "name": "Class names and library classes",
       "scope": [
         "entity.name.class",
+        "entity.name.type.class",
         "entity.other.inherited-class",
-        "support.class"
+        "support.class",
+        "support.class.component"
+      ],
+      "settings": {
+        "foreground": "#D2D5DF"
+      }
+    },
+    {
+      "name": "Namespaces and modules",
+      "scope": [
+        "entity.name.namespace",
+        "entity.name.type.module"
       ],
       "settings": {
         "foreground": "#D2D5DF"
@@ -316,7 +415,9 @@
       "scope": [
         "entity.other.attribute-name",
         "entity.other.attribute-name.html",
-        "entity.other.attribute-name.xml"
+        "entity.other.attribute-name.xml",
+        "entity.other.attribute-name.id",
+        "entity.other.attribute-name.class"
       ],
       "settings": {
         "foreground": "#BAA4E5"
@@ -353,28 +454,44 @@
     },
     {
       "name": "Invalid",
-      "scope": ["invalid", "invalid.illegal"],
+      "scope": ["invalid", "invalid.illegal", "invalid.deprecated"],
       "settings": {
         "foreground": "#FF977B"
       }
     }
   ],
   "semanticTokenColors": {
+    "comment": "#9EA5BA",
+    "string": "#FCC19F",
+    "number": "#41C4F7",
+    "regexp": "#FCC19F",
+    "operator": "#41C4F7",
     "function": "#BAA4E5",
+    "function.defaultLibrary": "#EDB378",
     "method": "#BAA4E5",
     "decorator": "#BAA4E5",
+    "macro": "#BAA4E5",
     "keyword": "#BAA4E5",
     "modifier": "#41C4F7",
+    "label": "#EDB378",
+    "event": "#BAA4E5",
     "namespace": "#D2D5DF",
     "type": "#EDB378",
+    "type.defaultLibrary": "#EDB378",
     "class": "#D2D5DF",
+    "class.defaultLibrary": "#D2D5DF",
     "interface": "#EDB378",
     "enum": "#EDB378",
     "enumMember": "#EDB378",
     "typeParameter": "#EDB378",
     "variable": "#41C4F7",
+    "variable.defaultLibrary": "#EDB378",
+    "variable.constant": "#EDB378",
+    "variable.readonly": "#41C4F7",
     "property": "#F3F4F7",
+    "property.readonly": "#F3F4F7",
     "member": "#F3F4F7",
-    "parameter": "#41C4F7"
+    "parameter": "#41C4F7",
+    "method.defaultLibrary": "#EDB378"
   }
 }

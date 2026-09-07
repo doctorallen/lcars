@@ -4,6 +4,16 @@
   "publisher": "esperinnovations",
   "description": "An LCARS-inspired high-contrast color theme for Visual Studio Code.",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/doctorallen/lcars.git"
+  },
+  "scripts": {
+    "package:vsix": "vsce package --no-dependencies --skip-license"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.9.2"
+  },
   "engines": {
     "vscode": "^1.136.0"
   },
@@ -16,16 +26,6 @@
         "label": "LCARS",
         "uiTheme": "vs-dark",
         "path": "./themes/LCARS-color-theme.json"
-      }
-    ],
-    "grammars": [
-      {
-        "scopeName": "lcars.typescript.modifiers",
-        "path": "./syntaxes/lcars-typescript-modifiers.tmLanguage.json",
-        "injectTo": [
-          "source.ts",
-          "source.tsx"
-        ]
       }
     ]
   }
