@@ -17,6 +17,16 @@
         "uiTheme": "vs-dark",
         "path": "./themes/LCARS-color-theme.json"
       }
+    ],
+    "grammars": [
+      {
+        "scopeName": "lcars.typescript.modifiers",
+        "path": "./syntaxes/lcars-typescript-modifiers.tmLanguage.json",
+        "injectTo": [
+          "source.ts",
+          "source.tsx"
+        ]
+      }
     ]
   }
 }

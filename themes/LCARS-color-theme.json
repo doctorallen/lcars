@@ -40,13 +40,13 @@
     "sideBarSectionHeader.background": "#52596E",
     "sideBarSectionHeader.foreground": "#F3F4F7",
     "sideBar.border": "#41C4F7",
-    "list.activeSelectionBackground": "#BAA4E5",
-    "list.activeSelectionForeground": "#1C3C55",
-    "list.activeSelectionIconForeground": "#1C3C55",
+    "list.activeSelectionBackground": "#1C3C55",
+    "list.activeSelectionForeground": "#F3F4F7",
+    "list.activeSelectionIconForeground": "#41C4F7",
     "list.inactiveSelectionBackground": "#52596E",
     "list.inactiveSelectionForeground": "#F3F4F7",
     "list.inactiveSelectionIconForeground": "#D2D5DF",
-    "list.hoverBackground": "#52596E",
+    "list.hoverBackground": "#EDB37840",
     "list.hoverForeground": "#F3F4F7",
     "list.focusOutline": "#41C4F7",
     "editor.background": "#1C3C55",
@@ -139,8 +139,36 @@
       }
     },
     {
-      "name": "Keywords and storage",
-      "scope": ["keyword", "storage", "storage.type", "storage.modifier"],
+      "name": "Keywords",
+      "scope": ["keyword"],
+      "settings": {
+        "foreground": "#BAA4E5"
+      }
+    },
+    {
+      "name": "Storage",
+      "scope": ["storage"],
+      "settings": {
+        "foreground": "#41C4F7"
+      }
+    },
+    {
+      "name": "Storage types",
+      "scope": ["storage.type"],
+      "settings": {
+        "foreground": "#FF977B"
+      }
+    },
+    {
+      "name": "TypeScript private modifiers",
+      "scope": ["storage.modifier.private.ts"],
+      "settings": {
+        "foreground": "#BAA4E5"
+      }
+    },
+    {
+      "name": "TypeScript readonly modifiers",
+      "scope": ["storage.modifier.readonly.ts"],
       "settings": {
         "foreground": "#41C4F7"
       }
@@ -200,17 +228,75 @@
       }
     },
     {
+      "name": "Variables",
+      "scope": ["variable", "support.other.variable", "variable.other"],
+      "settings": {
+        "foreground": "#41C4F7"
+      }
+    },
+    {
+      "name": "Function parameters",
+      "scope": [
+        "variable.parameter",
+        "variable.parameter.function"
+      ],
+      "settings": {
+        "foreground": "#41C4F7"
+      }
+    },
+    {
+      "name": "Object properties",
+      "scope": [
+        "variable.other.property",
+        "variable.other.object.property",
+        "meta.property-name",
+        "support.type.property-name"
+      ],
+      "settings": {
+        "foreground": "#F3F4F7"
+      }
+    },
+    {
       "name": "Functions",
-      "scope": ["entity.name.function", "support.function", "variable.function"],
+      "scope": ["entity.name.function", "variable.function"],
       "settings": {
         "foreground": "#BAA4E5"
       }
     },
     {
-      "name": "Types and classes",
-      "scope": ["entity.name.type", "entity.name.class", "support.type", "support.class"],
+      "name": "Library functions",
+      "scope": ["support.function"],
       "settings": {
         "foreground": "#EDB378"
+      }
+    },
+    {
+      "name": "Decorators",
+      "scope": [
+        "meta.decorator",
+        "entity.name.function.decorator",
+        "entity.name.function.decorator.ts"
+      ],
+      "settings": {
+        "foreground": "#BAA4E5"
+      }
+    },
+    {
+      "name": "Types",
+      "scope": ["entity.name.type", "support.type"],
+      "settings": {
+        "foreground": "#EDB378"
+      }
+    },
+    {
+      "name": "Class names and library classes",
+      "scope": [
+        "entity.name.class",
+        "entity.other.inherited-class",
+        "support.class"
+      ],
+      "settings": {
+        "foreground": "#D2D5DF"
       }
     },
     {
@@ -276,13 +362,19 @@
   "semanticTokenColors": {
     "function": "#BAA4E5",
     "method": "#BAA4E5",
+    "decorator": "#BAA4E5",
+    "keyword": "#BAA4E5",
+    "modifier": "#41C4F7",
+    "namespace": "#D2D5DF",
     "type": "#EDB378",
-    "class": "#EDB378",
+    "class": "#D2D5DF",
     "interface": "#EDB378",
     "enum": "#EDB378",
+    "enumMember": "#EDB378",
     "typeParameter": "#EDB378",
-    "variable": "#F3F4F7",
-    "property": "#D2D5DF",
-    "parameter": "#D2D5DF"
+    "variable": "#41C4F7",
+    "property": "#F3F4F7",
+    "member": "#F3F4F7",
+    "parameter": "#41C4F7"
   }
 }

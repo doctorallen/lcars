@@ -23,6 +23,10 @@ surfaces.
 | Diff line fills | Blue `#37A6D1` and orange-red `#E7442A` | Matching border colors | Replaces colored text backgrounds with borders, preserving readable inherited diff text. |
 | Function and method tokens | Barley `#EDB378` | African violet `#BAA4E5` | Reduces the concentration of warm orange tones in code while retaining AA contrast. |
 | Type and class tokens | African violet `#BAA4E5` | Barley `#EDB378` | Keeps barley in the syntax palette on the less frequent type roles, balancing warm and cool token colors. |
+| Keyword, storage, and storage-type tokens | Shared bright blue `#41C4F7` | African violet `#BAA4E5`, bright blue `#41C4F7`, and pale orange-red `#FF977B` | Follows the Helix token separation without importing its colors: language keywords, modifiers, and declaration types now have independent roles. |
+| TypeScript/JavaScript class names | Barley `#EDB378` | Ghost gray `#D2D5DF` | Separates the class name from the `class` declaration keyword and keeps type names visually distinct. |
+| Variables, parameters, and properties | Variables and parameters `#F3F4F7`, properties `#D2D5DF` | Variables/parameters bright blue `#41C4F7`, properties starlight `#F3F4F7` | Makes identifiers, arguments, and object members easier to distinguish in TypeScript code. |
+| Library functions and types | Shared function/type accents | Barley `#EDB378` functions and ghost gray `#D2D5DF` types/classes | Separates framework/API symbols from user-defined functions and types. |
 | HTML/XML tag names | African violet `#BAA4E5` | Bright blue `#41C4F7` | Separates document structure from attributes and preserves a 5.73:1 contrast ratio on the editor background. |
 | HTML/XML attribute names | African violet `#BAA4E5` | Barley `#EDB378` | Gives attributes a distinct warm accent without using the same color as tag names. |
 | HTML/XML tag punctuation | African violet `#BAA4E5` | Ghost gray `#D2D5DF` | Keeps angle brackets and closing syntax visually quiet so names and values remain easier to scan. |
@@ -32,9 +36,13 @@ surfaces.
 | Primary button text/background | Dark blue `#1C3C55` / bright blue `#41C4F7` | Starlight `#F3F4F7` / dark blue `#1C3C55` | VS Code applies 40% opacity to disabled buttons; a light foreground remains more readable while the bright-blue border preserves focus and LCARS emphasis. |
 | Active editor selection | African violet `#BAA4E5` with dark-blue text `#1C3C55` | Dirty mauve `#7A506D` at 25% opacity with starlight text `#F3F4F7` | Makes the lavender selection more visible while allowing the bright syntax colors to remain readable; the resulting starlight contrast is approximately 9.3:1 on the editor surface. |
 | Active Explorer selection icons | Bright blue `#41C4F7` | Dark blue `#1C3C55` | Aligns file-type icons with the active filename and provides 5.22:1 contrast on the African-violet selection background. |
+| Active Explorer selection | African violet `#BAA4E5` with dark-blue text `#1C3C55` | Dark blue `#1C3C55` with starlight text `#F3F4F7` | Replaces the lower-contrast lavender row with an AAA text treatment; the focused file remains distinct from the dark-gray sidebar. |
+| Active Explorer selection icons | Dark blue `#1C3C55` | Bright blue `#41C4F7` | Restores a visible file-type accent on the dark active row while retaining 5.73:1 contrast. |
+| Explorer hover selection | Medium dark gray `#52596E` with starlight text `#F3F4F7` | 25% barley `#EDB37840` over dark gray with starlight text `#F3F4F7` | Softens the hover state while retaining a visible yellow accent and approximately 6.48:1 text contrast against the blended sidebar surface. |
 | PHP visibility and storage modifiers | Bright blue `#41C4F7` | African violet `#BAA4E5` | Separates `public`, `private`, `protected`, `readonly`, and related modifiers from the bright-blue `function` keyword. |
 | TypeScript/JavaScript class keywords | Bright blue `#41C4F7` | Barley `#EDB378` | Aligns `class` with the class name while keeping `export` in the bright-blue keyword family. |
 | TypeScript/JavaScript class keywords | Barley `#EDB378` | African violet `#BAA4E5` | Separates the `class` keyword from the barley class name while keeping `export` bright blue. |
+| TypeScript `private` and `readonly` modifiers | Shared bright blue `#41C4F7` | `private` African violet `#BAA4E5`; `readonly` bright blue `#41C4F7` | An injected TypeScript grammar assigns separate scopes to the two modifier words so visibility and immutability are distinguishable. |
 
 Mars red `#FF2200`, butterscotch `#EA9C72`, light orange-red `#FF6753`, and
 orange-red `#E7442A` remain in the theme as non-text diagnostic colors:
@@ -58,16 +66,17 @@ cannot assign an individual color to either action.
 | Dark blue `#1C3C55` | African violet `#BAA4E5` | 5.22:1 | AA |
 | Dark blue `#1C3C55` | Bright blue `#41C4F7` | 5.73:1 | AA |
 | Barley `#EDB378` | Dark gray `#2F3749` | 6.42:1 | AA |
+| Starlight `#F3F4F7` | 25% barley `#EDB378` over dark gray `#2F3749` | approximately 6.48:1 | AA |
 | Starlight `#F3F4F7` | 25% dirty mauve `#7A506D` over dark blue `#1C3C55` | approximately 9.3:1 | AAA |
 
 ## Approved palette and usage
 
 | Color | Hex | Current usage |
 | --- | --- | --- |
-| African violet | `#BAA4E5` | Active selections, suggestion selections, secondary buttons, function/method tokens, PHP visibility/storage modifiers, TypeScript/JavaScript class keywords, HTML/XML attribute names, terminal magenta. |
+| African violet | `#BAA4E5` | Active selections, suggestion selections, secondary buttons, keywords, function/method tokens, decorators, PHP visibility/storage modifiers, TypeScript `private` modifiers, TypeScript/JavaScript class keywords, HTML/XML attribute names, terminal magenta. |
 | Almond | `#D29B7F` | Terminal green and untracked Git decorations. |
 | Almond creme | `#FCC19F` | Hovered primary and secondary buttons, active line numbers, HTML/XML attribute values, string tokens, bright terminal green. |
-| Barley | `#EDB378` | Activity-bar icons, sidebar and panel headings, type/class tokens, bright terminal yellow. |
+| Barley | `#EDB378` | Activity-bar icons, sidebar and panel headings, type tokens, library functions, 25% translucent Explorer hover background, and bright terminal yellow. |
 | Bluey | `#8899FF` | Word-highlight overview-ruler marker. |
 | Brown | `#895129` | Bracket-match background. |
 | Butterscotch | `#EA9C72` | Modified Git decorations and warning squiggle. |
@@ -80,15 +89,15 @@ cannot assign an individual color to either action.
 | Subdued sienna | `#C47D69` | Modified overview-ruler marker. |
 | True mauve | `#C082A9` | Badge backgrounds with dark-blue foreground text. |
 | Blue | `#37A6D1` | Informational squiggle and inserted-diff border. |
-| Bright blue | `#41C4F7` | Focus rings, links, input/widget borders, primary-button borders, keywords/storage tokens, HTML/XML tag names, terminal blue, and terminal cyan. |
-| Dark blue | `#1C3C55` | Editor, terminal, title-bar, panel, inactive-tab, primary-button backgrounds, and active Explorer selection icons. |
+| Bright blue | `#41C4F7` | Focus rings, links, input/widget borders, primary-button borders, active Explorer selection icons, storage/variable/parameter tokens, TypeScript `readonly`, export and PHP function keywords, constants, HTML/XML tag names, terminal blue, and terminal cyan. |
+| Dark blue | `#1C3C55` | Editor, terminal, title-bar, panel, inactive-tab, primary-button, and active Explorer selection backgrounds. |
 | Dark gray | `#2F3749` | Sidebar, status bar, widgets, inputs, dropdowns, and line-highlight backgrounds. |
-| Ghost gray | `#D2D5DF` | Secondary text, inactive labels, HTML/XML tag punctuation, terminal white, and inactive tabs. |
+| Ghost gray | `#D2D5DF` | Secondary text, inactive labels, class names, library types/classes, HTML/XML tag punctuation, terminal white, and inactive tabs. |
 | Light gray | `#9EA5BA` | Comments, placeholders, and inactive line numbers. |
 | Light orange-red | `#FF6753` | Added-line gutter indicator only; never normal text. |
 | Medium dark blue | `#2A7193` | Minimap background and hovered primary buttons. |
 | Medium dark gray | `#52596E` | Active tabs, hover states, section headers, inactive selections, and indent guides. |
 | Orange-red | `#E7442A` | Deleted-line gutter and removed-diff border. |
-| Pale orange-red | `#FF977B` | Error text, invalid tokens, deleted-resource text, editor cursor, headings, and terminal red. |
+| Pale orange-red | `#FF977B` | Error text, invalid tokens, storage-type declaration tokens, deleted-resource text, editor cursor, headings, and terminal red. |
 | Primary gray | `#6D748C` | Whitespace markers and bright terminal black. |
-| Starlight | `#F3F4F7` | Main editor, buttons, sidebar, widget, terminal, tab, title-bar, and status-bar text. |
+| Starlight | `#F3F4F7` | Main editor, object properties, buttons, sidebar, widget, terminal, tab, title-bar, status-bar, and Explorer hover text. |

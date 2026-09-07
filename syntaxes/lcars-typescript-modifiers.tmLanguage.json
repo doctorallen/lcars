@@ -1,0 +1,14 @@
+{
+  "scopeName": "lcars.typescript.modifiers",
+  "injectionSelector": "L:source.ts -comment -string, L:source.tsx -comment -string",
+  "patterns": [
+    {
+      "match": "(?<![#\\w$])private\\b(?=\\s)",
+      "name": "storage.modifier.private.ts"
+    },
+    {
+      "match": "(?<![#\\w$])readonly\\b(?=\\s)",
+      "name": "storage.modifier.readonly.ts"
+    }
+  ]
+}
