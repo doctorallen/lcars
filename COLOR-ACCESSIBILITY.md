@@ -1,5 +1,137 @@
 # LCARS Color and Accessibility Log
 
+## Character theme variants
+
+Four additional themes reuse only colors already in the approved palette
+above, each assigning one approved accent as the theme's primary identity
+color for workbench UI chrome — focus rings, links, borders, buttons,
+badges, activity-bar icons, sidebar/panel titles, tabs, and the editor and
+terminal background surfaces. **Code syntax highlighting (`tokenColors` and
+`semanticTokenColors`) is identical across all five themes** — operators,
+storage, variables, parameters, tag names, and every other token role keep
+the base theme's bright blue `#41C4F7` (and other syntax colors) regardless
+of which character theme is active, so switching themes only changes the
+"chrome" around the code, never the code's own coloring.
+
+| Theme | File | Primary accent (UI chrome only) | Contrast on dark blue `#1C3C55` |
+| --- | --- | --- | --- |
+| Picard | `themes/LCARS-Picard-color-theme.json` | Pale orange-red `#FF977B` | 5.45:1 (AA) |
+| Troi | `themes/LCARS-Troi-color-theme.json` | African violet `#BAA4E5` | 5.22:1 (AA) |
+| Data | `themes/LCARS-Data-color-theme.json` | Barley `#EDB378` | 6.20:1 (AA) |
+| Crusher | `themes/LCARS-Crusher-color-theme.json` | Bright blue `#41C4F7` | 5.73:1 (AA) |
+
+No new colors were introduced and no existing text-safe/diagnostic-only
+distinctions (Mars, orange-red, light orange-red, red) were altered.
+
+Each theme rebrands the main workbench chrome to its primary color, so the
+identity is visible in the UI around the editor: `activityBar.foreground`
+(activity-bar icons), `sideBarTitle.foreground`, `panelTitle.activeForeground`,
+`badge.background`, `activityBarBadge.background`, `button.secondaryBackground`,
+`editorSuggestWidget.selectedBackground`, `editorBracketMatch.border`,
+`tab.activeBorderTop`, `textLink.activeForeground`, and
+`textBlockQuote.border` all switch from their base-theme colors (barley,
+orange, true mauve, or African violet) to each theme's primary accent. The
+existing dark-blue foreground text used on badges and secondary buttons
+remains readable against every new primary (5.22:1–6.20:1, all AA). Diagnostic
+and semantic colors — error/warning/info/hint squiggles, gutters, overview
+rulers, diff borders, and Git decorations — are intentionally left unchanged
+in every theme so their meaning (e.g. red = error, green = added) stays
+consistent regardless of the active character theme.
+
+VS Code controls tab geometry in the workbench; color themes only provide color
+roles. The focused, unfocused, selected, and inactive tab roles are all set
+explicitly in each theme so the modern workbench does not fall back to a stale
+or unrelated tab color. The palette reference page keeps the tab mock-up
+rectangular and delegates rounded-corner behavior to VS Code itself.
+
+Surface backgrounds are tinted the same way: each neutral base color (dark
+blue `#1C3C55`, dark gray `#2F3749`, medium dark gray `#52596E`) is
+hue-shifted toward the theme's primary accent so the activity bar, sidebar,
+panel, status bar, title bar, tabs, dropdowns, inputs, and editor widgets all
+carry a clearly visible color cast instead of staying neutral gray/blue in
+every theme. Rather than a flat low-opacity blend (which only produced a
+faint cast before the foreground text collided with it), each surface is
+built by blending 40–45% of the primary accent into the neutral base and then
+darkening the result only as much as needed to keep its foreground text
+readable:
+
+- Surfaces that also host identity-colored icons/titles
+  (`activityBar.background`, `sideBar.background`, `panel.background`, which
+  carry `activityBar.foreground`, `sideBarTitle.foreground`, and
+  `panelTitle.activeForeground` in the primary accent color) use a 40% hue
+  blend, darkened until contrast against that same primary color is at least
+  4.6:1.
+- Surfaces whose text stays neutral starlight (`statusBar.background`,
+  `titleBar.activeBackground`/`inactiveBackground`,
+  `tab.inactiveBackground`/`unfocusedInactiveBackground`,
+  `input.background`, `editorWidget.background`,
+  `editorSuggestWidget.background`, `editorHoverWidget.background`,
+  `sideBarSectionHeader.background`, `list.inactiveSelectionBackground`,
+  `statusBarItem.hoverBackground`) use a 45% hue blend, darkened until
+  contrast against starlight text is at least 6:1, since white text
+  tolerates a richer, darker-saturated background.
+
+`editor.background`, `terminal.background`, and `sideBar.background` use two
+deeper, palette-derived neutrals rather than the standard dark blue/dark gray
+used elsewhere in the UI (buttons, activity bar, panel, title bar, status
+bar, and inactive tabs) — chosen to match a darker aesthetic while staying purely derived
+from the two approved dark neutrals:
+
+- **Deep dark blue** `#09131A` — dark blue `#1C3C55` darkened ~69% —
+  used for `editor.background` and `terminal.background` in the base LCARS
+  theme.
+- **Deep dark gray** `#212633` — dark gray `#2F3749` darkened ~30% —
+  used for `sideBar.background` in the base LCARS theme.
+
+Each character theme tints these same two deep neutrals toward its primary
+accent using the same blend-then-darken approach as the other surfaces, but
+with a floor tuned to what each surface actually needs:
+
+- `editor.background`/`terminal.background`: blends 32–35% of the primary
+  into deep dark blue `#09131A`, darkened only as needed to keep the 8 syntax
+  colors that carry actual code text (comments, keywords, operators/storage,
+  strings, constants, object properties, class/namespace names, and plain
+  editor text) at ≥4.5:1 contrast. Final values: Picard `#4D3430`, Troi
+  `#39384F`, Data `#42392D`, Crusher `#163E50`.
+  The decorative/diagnostic colors that are not primary code text —
+  error/warning/info/hint squiggles, whitespace markers, overview-ruler
+  marks, and terminal ANSI colors — were intentionally excluded from that
+  floor and are left unchanged across all themes, since they carry universal
+  meaning and were already lower-contrast by design in the base theme.
+- `sideBar.background`: blends 40–47% of the primary into deep dark gray
+  `#212633`, darkened until contrast against the theme's primary-colored
+  `sideBarTitle.foreground` is at least 4.6:1. Final values: Picard
+  `#5A3D3A`, Troi `#433E56`, Data `#5A493B`, Crusher `#214C61`.
+
+`activityBar.background` and `panel.background` still tint from the
+standard dark blue `#1C3C55` (not the deeper editor variant), and
+`statusBar.background` still tints from the standard dark gray `#2F3749`
+(not the deeper sidebar variant) — only the editor/terminal surface and the
+sidebar itself use the deeper neutrals. The lowest resulting contrast across
+all tinted surfaces and their foreground text, checked across all four
+themes, remains above 4.5:1 (AA).
+
+## Theme palette reference page
+
+`theme-palettes.html` is a generated, self-contained page (open directly in a
+browser, no build step) with an interactive mock VS Code window styled from
+each theme's real color values — activity bar, sidebar, tabs, editor with
+syntax-highlighted sample code, status bar, and badges. A theme selector
+switches between the base theme and all four character themes. Clicking any
+element in the mock-up (or any color in the palette legend below it) opens an
+inspector showing exactly which color role(s) it uses, with a live color
+picker to edit them; editing a palette-legend color updates every role that
+shares that exact color at once. The WCAG contrast table recalculates live as
+colors are edited. An **Export theme JSON** button downloads the edited
+result as a ready-to-use VS Code theme file. Edits are local to the browser
+session only (a **Reset changes** button restores the original per theme).
+Regenerate the embedded theme data from the JSON files in `themes/` after any
+palette or color-role change so it stays accurate. Color edits in the
+inspector are restricted to the 27 approved palette swatches (the same
+colors documented in the "Approved palette and usage" table above) — there is
+no free-form/native color picker, so any edit made in the page stays within
+the approved LCARS palette.
+
 ## Scope
 
 This is the approved LCARS palette. Each RGB color is used exactly as provided;
@@ -114,8 +246,8 @@ Mars red `#FF2200`, butterscotch `#EA9C72`, light orange-red `#FF6753`, and
 orange-red `#E7442A` remain in the theme as non-text diagnostic colors:
 editor squiggles, overview-ruler/gutter markers, and diff borders. Diagnostic
 messages use text and icons in addition to color. Red `#CF4F4F` is retained
-only as a decorative unfocused-tab accent because it does not meet the 3:1
-non-text contrast threshold on dark blue.
+in the approved palette but is no longer assigned to a tab role; unfocused tabs
+use the same identity-colored borders as their focused counterparts.
 
 VS Code exposes one shared `button.secondary*` color set. Notification actions
 such as **Always** and **Never** therefore remain the same visual class; their
@@ -150,19 +282,21 @@ cannot assign an individual color to either action.
 | Dusty mauve | `#9D698A` | Selection-highlight overview-ruler marker. |
 | Lilac | `#8A72A7` | Strong word-highlight overview-ruler marker and hint squiggle. |
 | Mars | `#FF2200` | Error squiggle and error indicator only; never normal text. |
-| Orange | `#EB943A` | Active links, panel and status borders, active-tab stripe, and terminal yellow. |
-| Red | `#CF4F4F` | Decorative unfocused active-tab accent only; never text or a state indicator. |
+| Orange | `#EB943A` | Active links, panel and status borders, the base active-tab background/stripe, and terminal yellow. |
+| Red | `#CF4F4F` | Approved palette color reserved for future diagnostic or decorative use; not assigned to a current tab role. |
 | Subdued sienna | `#C47D69` | Modified overview-ruler marker. |
 | True mauve | `#C082A9` | Badge backgrounds with dark-blue foreground text. |
 | Blue | `#37A6D1` | Informational squiggle and inserted-diff border. |
 | Bright blue | `#41C4F7` | Focus rings, links, input/widget borders, primary-button borders, active Explorer selection icons, operators, storage/modifier/variable/parameter tokens, export and PHP function keywords, numeric constants, HTML/XML tag names, terminal blue, and terminal cyan. |
-| Dark blue | `#1C3C55` | Editor, terminal, title-bar, panel, inactive-tab, primary-button, and active Explorer selection backgrounds. |
-| Dark gray | `#2F3749` | Sidebar, status bar, widgets, inputs, dropdowns, and line-highlight backgrounds. |
+| Dark blue | `#1C3C55` | Activity bar, panel, title-bar, inactive-tab, primary-button, and active Explorer selection backgrounds. |
+| Dark gray | `#2F3749` | Status bar, widgets, inputs, dropdowns, and line-highlight backgrounds. |
+| Deep dark blue | `#09131A` | Editor and terminal backgrounds (dark blue darkened ~69%, tinted per character theme). |
+| Deep dark gray | `#212633` | Sidebar background (dark gray darkened ~30%, tinted per character theme). |
 | Ghost gray | `#D2D5DF` | Secondary text, inactive labels, language variables, namespaces/modules, class names, library types/classes, HTML/XML tag punctuation, terminal white, and inactive tabs. |
 | Light gray | `#9EA5BA` | Comments, placeholders, and inactive line numbers. |
 | Light orange-red | `#FF6753` | Added-line gutter indicator only; never normal text. |
 | Medium dark blue | `#2A7193` | Minimap background and hovered primary buttons. |
-| Medium dark gray | `#52596E` | Active tabs, hover states, section headers, inactive selections, and indent guides. |
+| Medium dark gray | `#52596E` | Hover states, section headers, inactive selections, and indent guides. |
 | Orange-red | `#E7442A` | Deleted-line gutter and removed-diff border. |
 | Pale orange-red | `#FF977B` | Error text, invalid tokens, storage-type declaration tokens, deleted-resource text, editor cursor, headings, and terminal red. |
 | Primary gray | `#6D748C` | Whitespace markers and bright terminal black. |

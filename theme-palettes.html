@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LCARS Theme Palettes &amp; Accessibility</title>
+<style>
+  :root {
+    --bg: #14202B;
+    --card-bg: #1C3C55;
+    --text: #F3F4F7;
+    --muted: #9EA5BA;
+    --border: #52596E;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0 0 4rem;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header {
+    padding: 2rem 2rem 1.25rem;
+    background: linear-gradient(180deg, #1C3C55, #14202B);
+    border-bottom: 3px solid #EB943A;
+  }
+  header h1 { margin: 0 0 0.25rem; font-size: 1.9rem; letter-spacing: 0.05em; }
+  header p { margin: 0.5rem 0 0; color: var(--muted); max-width: 75ch; }
+  .toolbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem;
+    padding: 1rem 2rem; background: #0F1922; position: sticky; top: 0; z-index: 20;
+    border-bottom: 1px solid var(--border);
+  }
+  .toolbar label { color: var(--muted); font-size: 0.85rem; }
+  .toolbar select, .toolbar button {
+    font: inherit; padding: 0.45rem 0.9rem; border-radius: 6px; border: 1px solid var(--border);
+    background: #2F3749; color: var(--text); cursor: pointer;
+  }
+  .toolbar button.primary { background: #EB943A; color: #1C3C55; border-color: #EB943A; font-weight: 700; }
+  .toolbar button:hover { border-color: #41C4F7; }
+  .toolbar .spacer { flex: 1; }
+  main { padding: 0 2rem; max-width: 1200px; margin: 0 auto; }
+
+  /* ---------- Mock VS Code window ---------- */
+  .mockup-wrap { margin: 2rem 0; }
+  .mockup-wrap h2 { font-size: 1.3rem; margin-bottom: 0.25rem; }
+  .mockup-hint { color: var(--muted); font-size: 0.85rem; margin: 0 0 1rem; }
+  .mock-window {
+    border-radius: 10px; overflow: hidden; border: 1px solid #000;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    display: flex; flex-direction: column; height: 560px;
+  }
+  .mock-titlebar {
+    height: 34px; display: flex; align-items: center; padding: 0 12px; gap: 8px;
+    background: var(--c-titleBar-activeBackground); color: var(--c-titleBar-activeForeground);
+    flex-shrink: 0; cursor: pointer;
+  }
+  .mock-dot { width: 11px; height: 11px; border-radius: 50%; }
+  .mock-dot.red { background: #FF5F56; }
+  .mock-dot.yellow { background: #FFBD2E; }
+  .mock-dot.green { background: #27C93F; }
+  .mock-titlebar-title { margin-left: 8px; font-size: 0.8rem; opacity: 0.9; }
+  .mock-body { flex: 1; display: flex; min-height: 0; }
+  .mock-activitybar {
+    width: 50px; flex-shrink: 0; background: var(--c-activityBar-background);
+    display: flex; flex-direction: column; align-items: center; padding-top: 12px; gap: 18px;
+    cursor: pointer;
+  }
+  .mock-activity-icon { position: relative; width: 24px; height: 24px; color: var(--c-activityBar-inactiveForeground); }
+  .mock-activity-icon.active { color: var(--c-activityBar-foreground); }
+  .mock-activity-icon svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.6; }
+  .mock-badge-dot {
+    position: absolute; top: -6px; right: -8px; min-width: 15px; height: 15px; border-radius: 8px;
+    background: var(--c-activityBarBadge-background); color: var(--c-activityBarBadge-foreground);
+    font-size: 9px; display: flex; align-items: center; justify-content: center; padding: 0 3px; font-weight: 700;
+  }
+  .mock-sidebar {
+    width: 230px; flex-shrink: 0; background: var(--c-sideBar-background); color: var(--c-sideBar-foreground);
+    border-right: 1px solid var(--c-sideBar-border); overflow: auto; font-size: 0.82rem;
+    cursor: pointer;
+  }
+  .mock-sidebar-title {
+    color: var(--c-sideBarTitle-foreground); text-transform: uppercase; font-size: 0.72rem;
+    font-weight: 700; letter-spacing: 0.05em; padding: 10px 14px 6px;
+  }
+  .mock-section-header {
+    background: var(--c-sideBarSectionHeader-background); color: var(--c-sideBarSectionHeader-foreground);
+    padding: 5px 14px; font-weight: 700; font-size: 0.75rem; letter-spacing: 0.03em;
+  }
+  .mock-file-item { padding: 3px 14px 3px 26px; white-space: nowrap; }
+  .mock-file-item:hover { background: var(--c-list-hoverBackground); color: var(--c-list-hoverForeground); }
+  .mock-file-item.selected { background: var(--c-list-activeSelectionBackground); color: var(--c-list-activeSelectionForeground); }
+  .mock-file-item.inactive-selected { background: var(--c-list-inactiveSelectionBackground); color: var(--c-list-inactiveSelectionForeground); }
+  .mock-editor-group { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--c-editor-background); }
+  .mock-tabs {
+    display: flex; align-items: flex-end; background: var(--c-editorGroupHeader-tabsBackground);
+    flex-shrink: 0; cursor: pointer;
+  }
+  .mock-tab {
+    padding: 7px 16px; font-size: 0.78rem; background: var(--c-tab-inactiveBackground); color: var(--c-tab-inactiveForeground);
+  }
+  .mock-tab.active {
+    background: var(--c-tab-activeBackground); color: var(--c-tab-activeForeground);
+    border-top: 2px solid var(--c-tab-activeBorderTop);
+  }
+  .mock-editor {
+    flex: 1; background: var(--c-editor-background); color: var(--c-editor-foreground);
+    padding: 14px 18px; font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 0.82rem;
+    line-height: 1.7; overflow: auto; cursor: text;
+  }
+  .mock-editor .ln { display: inline-block; width: 26px; color: var(--c-editorLineNumber-foreground); user-select: none; }
+  .mock-editor .line.active-line .ln { color: var(--c-editorLineNumber-activeForeground); }
+  .tok { cursor: pointer; border-radius: 2px; }
+  .tok-comment { color: var(--t-Comments); font-style: italic; }
+  .tok-keyword { color: var(--t-Keywords); }
+  .tok-control { color: var(--t-Control-keywords); }
+  .tok-string { color: var(--t-Strings); }
+  .tok-number { color: var(--t-Numbers-and-constants); }
+  .tok-function { color: var(--t-Functions); }
+  .tok-type { color: var(--t-Types); }
+  .tok-const { color: var(--t-Named-constants-and-enum-members); }
+  .tok-variable { color: var(--t-Variables); }
+  .tok-param { color: var(--t-Function-parameters); }
+  .tok-property { color: var(--t-Object-properties); }
+  .tok-decorator { color: var(--t-Decorators); }
+  .mock-statusbar {
+    height: 26px; flex-shrink: 0; background: var(--c-statusBar-background); color: var(--c-statusBar-foreground);
+    border-top: 1px solid var(--c-statusBar-border); display: flex; align-items: center; padding: 0 12px;
+    font-size: 0.72rem; gap: 14px; cursor: pointer;
+  }
+  .mock-badge-pill {
+    background: var(--c-badge-background); color: var(--c-badge-foreground);
+    border-radius: 10px; padding: 1px 8px; font-size: 0.68rem; font-weight: 700; cursor: pointer;
+  }
+  .mock-link { color: var(--c-textLink-foreground); cursor: pointer; }
+  .mock-link.active { color: var(--c-textLink-activeForeground); }
+  .mock-btn-secondary {
+    background: var(--c-button-secondaryBackground); color: var(--c-button-secondaryForeground);
+    border: none; border-radius: 4px; padding: 4px 10px; font-size: 0.72rem; cursor: pointer; font-weight: 600;
+  }
+
+  /* ---------- Legend ---------- */
+  .legend-section { margin: 2.5rem 0; }
+  .legend-section h2 { font-size: 1.3rem; margin-bottom: 0.25rem; }
+  .legend-hint { color: var(--muted); font-size: 0.85rem; margin: 0 0 1rem; }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.6rem; }
+  .swatch {
+    border-radius: 8px; padding: 0.6rem 0.7rem; min-height: 56px; border: 1px solid rgba(0,0,0,0.25);
+    font-size: 0.78rem; cursor: pointer; transition: transform 0.1s ease;
+  }
+  .swatch:hover { transform: translateY(-2px); }
+  .swatch-hex { font-weight: 700; font-family: monospace; }
+  .swatch-name { opacity: 0.9; }
+
+  /* ---------- Accessibility table ---------- */
+  .a11y-section { margin: 2.5rem 0 4rem; }
+  .a11y-section h2 { font-size: 1.3rem; margin-bottom: 0.75rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th, td { text-align: left; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; }
+  .demo-cell { border-radius: 4px; font-weight: 600; text-align: center; white-space: nowrap; }
+  .pass { color: #D29B7F; font-weight: 700; }
+  .warn { color: #EA9C72; font-weight: 700; }
+  .fail { color: #FF977B; font-weight: 700; }
+  code { font-family: monospace; }
+  footer { text-align: center; color: var(--muted); padding: 2rem; font-size: 0.85rem; }
+
+  /* ---------- Inspector ---------- */
+  .inspector-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; z-index: 100;
+    align-items: flex-start; justify-content: flex-end;
+  }
+  .inspector-overlay.open { display: flex; }
+  .inspector-panel {
+    background: #1C2530; color: var(--text); width: 360px; max-width: 92vw; height: 100%;
+    overflow: auto; padding: 1.25rem 1.25rem 2rem; border-left: 1px solid var(--border);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.4);
+  }
+  .inspector-panel h3 { margin: 0 0 0.25rem; font-size: 1.05rem; }
+  .inspector-panel .sub { color: var(--muted); font-size: 0.8rem; margin-bottom: 1rem; }
+  .inspector-close {
+    float: right; background: none; border: none; color: var(--text); font-size: 1.1rem; cursor: pointer;
+  }
+  .inspector-row {
+    display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border);
+  }
+  .inspector-row { flex-direction: column; align-items: stretch; }
+  .inspector-row label { flex: 1; font-size: 0.78rem; }
+  .inspector-row code { font-size: 0.72rem; color: var(--muted); display: block; }
+  .palette-picker { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.4rem; }
+  .palette-swatch {
+    width: 22px; height: 22px; border-radius: 5px; cursor: pointer; border: 2px solid transparent;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.35);
+  }
+  .palette-swatch.selected { border-color: #F3F4F7; box-shadow: 0 0 0 2px #14202B, 0 0 0 3px #F3F4F7; }
+  .palette-swatch:hover { transform: scale(1.12); }
+  .usage-list { margin: 0.75rem 0 0; padding-left: 1.1rem; font-size: 0.78rem; color: var(--muted); max-height: 220px; overflow: auto; }
+  .usage-list li { margin-bottom: 0.2rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>LCARS Theme Palettes &amp; Accessibility</h1>
+  <p>All colors below come from the approved LCARS palette in <code>COLOR-ACCESSIBILITY.md</code>. Click any element in the mock editor below, or any swatch, to see exactly which color role it uses, edit it live, and export the result as a VS Code theme file.</p>
+</header>
+<div class="toolbar">
+  <label for="themeSelect">Theme</label>
+  <select id="themeSelect"></select>
+  <button id="resetBtn" title="Discard edits for this theme">Reset changes</button>
+  <div class="spacer"></div>
+  <button id="exportBtn" class="primary">Export theme JSON</button>
+</div>
+<main>
+  <div class="mockup-wrap">
+    <h2 id="mockupHeading">Live preview</h2>
+    <p class="mockup-hint">This is an interactive mock-up of the VS Code window, styled with the selected theme's real color values. Click any part of it to inspect and change that color.</p>
+    <div class="mock-window">
+      <div class="mock-titlebar" data-keys="titleBar.activeBackground,titleBar.activeForeground" data-label="Title bar">
+        <span class="mock-dot red"></span><span class="mock-dot yellow"></span><span class="mock-dot green"></span>
+        <span class="mock-titlebar-title">sample.ts — lcars</span>
+      </div>
+      <div class="mock-body">
+        <div class="mock-activitybar">
+          <div class="mock-activity-icon active" data-keys="activityBar.foreground,activityBar.background" data-label="Activity bar — Explorer icon (active)">
+            <svg viewBox="0 0 24 24"><path d="M4 4h9l3 3h4v13H4z"/></svg>
+          </div>
+          <div class="mock-activity-icon" data-keys="activityBar.inactiveForeground,activityBar.background" data-label="Activity bar — Search icon (inactive)">
+            <svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><line x1="20" y1="20" x2="14.5" y2="14.5"/></svg>
+          </div>
+          <div class="mock-activity-icon" data-keys="activityBar.inactiveForeground,activityBar.background" data-label="Activity bar — Source Control icon (inactive)">
+            <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="12" r="2.5"/><path d="M6 8.5v7M8 6h4a4 4 0 0 1 4 4"/></svg>
+            <span class="mock-badge-dot" data-keys="activityBarBadge.background,activityBarBadge.foreground" data-label="Activity bar badge">6</span>
+          </div>
+          <div class="mock-activity-icon" data-keys="activityBar.inactiveForeground,activityBar.background" data-label="Activity bar — Run icon (inactive)">
+            <svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg>
+          </div>
+          <div class="mock-activity-icon" data-keys="activityBar.inactiveForeground,activityBar.background" data-label="Activity bar — Extensions icon (inactive)">
+            <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/></svg>
+          </div>
+        </div>
+        <div class="mock-sidebar" data-keys="sideBar.background,sideBar.foreground,sideBar.border" data-label="Sidebar">
+          <div class="mock-sidebar-title" data-keys="sideBarTitle.foreground" data-label="Sidebar title">Explorer</div>
+          <div class="mock-section-header" data-keys="sideBarSectionHeader.background,sideBarSectionHeader.foreground" data-label="Sidebar section header">SAMPLES</div>
+          <div class="mock-file-item">▾ typescript</div>
+          <div class="mock-file-item selected" data-keys="list.activeSelectionBackground,list.activeSelectionForeground,list.activeSelectionIconForeground" data-label="Active list selection">telemetry.ts</div>
+          <div class="mock-file-item inactive-selected" data-keys="list.inactiveSelectionBackground,list.inactiveSelectionForeground" data-label="Inactive list selection">event-bus.mjs</div>
+          <div class="mock-file-item">signal_processor.py</div>
+          <div class="mock-file-item">main.rs</div>
+          <div class="mock-file-item">README.md</div>
+        </div>
+        <div class="mock-editor-group">
+          <div class="mock-tabs" data-keys="editorGroupHeader.tabsBackground" data-label="Editor tab strip">
+            <div class="mock-tab active" data-keys="tab.activeBackground,tab.activeForeground,tab.activeBorder,tab.activeBorderTop" data-label="Active tab">telemetry.ts</div>
+            <div class="mock-tab" data-keys="tab.inactiveBackground,tab.inactiveForeground" data-label="Inactive tab">main.rs</div>
+          </div>
+          <div class="mock-editor" data-keys="editor.background,editor.foreground" data-label="Editor background">
+<div class="line"><span class="ln">1</span><span class="tok tok-comment" data-keys="token:Comments" data-label="Comments">// LCARS telemetry relay</span></div>
+<div class="line"><span class="ln">2</span><span class="tok tok-decorator" data-keys="token:Decorators" data-label="Decorators">@Injectable</span><span class="tok tok-keyword" data-keys="token:Keywords" data-label="Keywords">()</span></div>
+<div class="line"><span class="ln">3</span><span class="tok tok-keyword" data-keys="token:Keywords" data-label="Keywords">export class</span> <span class="tok tok-type" data-keys="token:Types" data-label="Types">Telemetry</span> {</div>
+<div class="line active-line"><span class="ln">4</span>&nbsp;&nbsp;<span class="tok tok-const" data-keys="token:Named-constants-and-enum-members" data-label="Named constants">MAX_RETRIES</span> = <span class="tok tok-number" data-keys="token:Numbers-and-constants" data-label="Numbers and constants">3</span>;</div>
+<div class="line">&nbsp;&nbsp;<span class="tok tok-keyword" data-keys="token:Keywords" data-label="Keywords">function</span> <span class="tok tok-function" data-keys="token:Functions" data-label="Functions">relay</span>(<span class="tok tok-param" data-keys="token:Function-parameters" data-label="Function parameters">signal</span>) {</div>
+<div class="line">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tok tok-control" data-keys="token:Control-keywords" data-label="Control keywords">if</span> (<span class="tok tok-property" data-keys="token:Object-properties" data-label="Object properties">signal</span>.strength &gt; <span class="tok tok-number" data-keys="token:Numbers-and-constants" data-label="Numbers and constants">0</span>) {</div>
+<div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="tok tok-variable" data-keys="token:Variables" data-label="Variables">console</span>.log(<span class="tok tok-string" data-keys="token:Strings" data-label="Strings">"relay ok"</span>);</div>
+<div class="line">&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+<div class="line">&nbsp;&nbsp;}</div>
+<div class="line">}</div>
+          </div>
+          <div class="mock-statusbar" data-keys="statusBar.background,statusBar.foreground,statusBar.border" data-label="Status bar">
+            <span>⎇ main</span>
+            <span class="mock-badge-pill" data-keys="badge.background,badge.foreground" data-label="Badge">3 problems</span>
+            <span class="mock-link" data-keys="textLink.foreground" data-label="Link text">TypeScript</span>
+            <span class="mock-link active" data-keys="textLink.activeForeground" data-label="Active link text">UTF-8</span>
+            <span class="mock-btn-secondary" data-keys="button.secondaryBackground,button.secondaryForeground" data-label="Secondary button">Secondary</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend-section">
+    <h2>Palette legend</h2>
+    <p class="legend-hint">Click a color to see everywhere it's used and edit it (updates every role that shares that color).</p>
+    <div class="swatches" id="swatchGrid"></div>
+  </div>
+
+  <div class="a11y-section">
+    <h2>Accessibility (WCAG contrast)</h2>
+    <table>
+      <thead>
+        <tr><th>Role</th><th>Foreground key</th><th>Background key</th><th>Preview</th><th>Colors</th><th>Contrast</th><th>Rating</th></tr>
+      </thead>
+      <tbody id="a11yBody"></tbody>
+    </table>
+  </div>
+</main>
+<footer>Generated from the theme JSON files in <code>themes/</code>. Edits made here are local to your browser only — use <strong>Export theme JSON</strong> to save a modified theme file.</footer>
+
+<div class="inspector-overlay" id="inspectorOverlay">
+  <div class="inspector-panel">
+    <button class="inspector-close" id="inspectorClose">✕</button>
+    <h3 id="inspectorTitle">Role</h3>
+    <div class="sub" id="inspectorSub"></div>
+    <div id="inspectorBody"></div>
+  </div>
+</div>
+
+<script>
+const BUNDLE = {"themes":{"LCARS":{"label":"LCARS","primary":"#41C4F7","colors":{"focusBorder":"#41C4F7","foreground":"#F3F4F7","disabledForeground":"#D2D5DF","descriptionForeground":"#D2D5DF","errorForeground":"#FF977B","icon.foreground":"#EDB378","textLink.foreground":"#41C4F7","textLink.activeForeground":"#EB943A","textBlockQuote.background":"#2F3749","textBlockQuote.border":"#BAA4E5","button.background":"#1C3C55","button.foreground":"#F3F4F7","button.border":"#41C4F7","button.hoverBackground":"#2A7193","button.secondaryBackground":"#BAA4E5","button.secondaryForeground":"#1C3C55","button.secondaryHoverBackground":"#FCC19F","dropdown.background":"#2F3749","dropdown.foreground":"#F3F4F7","dropdown.border":"#41C4F7","input.background":"#2F3749","input.foreground":"#F3F4F7","input.border":"#41C4F7","input.placeholderForeground":"#9EA5BA","badge.background":"#C082A9","badge.foreground":"#1C3C55","activityBar.background":"#1C3C55","activityBar.foreground":"#EDB378","activityBar.inactiveForeground":"#D2D5DF","activityBarBadge.background":"#EB943A","activityBarBadge.foreground":"#1C3C55","sideBar.background":"#212633","sideBar.foreground":"#F3F4F7","sideBarTitle.foreground":"#EDB378","sideBarSectionHeader.background":"#52596E","sideBarSectionHeader.foreground":"#F3F4F7","sideBar.border":"#41C4F7","list.activeSelectionBackground":"#1C3C55","list.activeSelectionForeground":"#F3F4F7","list.activeSelectionIconForeground":"#41C4F7","list.inactiveSelectionBackground":"#52596E","list.inactiveSelectionForeground":"#F3F4F7","list.inactiveSelectionIconForeground":"#D2D5DF","list.hoverBackground":"#EDB37840","list.hoverForeground":"#F3F4F7","list.focusOutline":"#41C4F7","editor.background":"#09131A","editor.foreground":"#F3F4F7","editorLineNumber.foreground":"#9EA5BA","editorLineNumber.activeForeground":"#FCC19F","editorCursor.foreground":"#FF977B","editor.selectionBackground":"#7A506D40","editor.selectionForeground":"#F3F4F7","editor.inactiveSelectionBackground":"#52596E","editor.lineHighlightBackground":"#2F3749","editorWhitespace.foreground":"#6D748C","editorIndentGuide.background1":"#52596E","editorIndentGuide.activeBackground1":"#41C4F7","editorWidget.background":"#2F3749","editorWidget.foreground":"#F3F4F7","editorWidget.border":"#41C4F7","editorSuggestWidget.background":"#2F3749","editorSuggestWidget.foreground":"#F3F4F7","editorSuggestWidget.selectedBackground":"#BAA4E5","editorSuggestWidget.selectedForeground":"#1C3C55","editorSuggestWidget.highlightForeground":"#FCC19F","editorHoverWidget.background":"#2F3749","editorHoverWidget.border":"#41C4F7","editorBracketMatch.background":"#895129","editorBracketMatch.border":"#EDB378","editorError.foreground":"#FF2200","editorWarning.foreground":"#EA9C72","editorInfo.foreground":"#37A6D1","editorHint.foreground":"#8A72A7","editorGutter.addedBackground":"#FF6753","editorGutter.deletedBackground":"#E7442A","editorOverviewRuler.border":"#1C3C55","editorOverviewRuler.findMatchForeground":"#7A506D","editorOverviewRuler.modifiedForeground":"#C47D69","editorOverviewRuler.selectionHighlightForeground":"#9D698A","editorOverviewRuler.wordHighlightForeground":"#8899FF","editorOverviewRuler.wordHighlightStrongForeground":"#8A72A7","minimap.background":"#2A7193","editorGroupHeader.tabsBackground":"#09131A","panel.background":"#1C3C55","panel.border":"#41C4F7","panelTitle.activeForeground":"#EDB378","panelTitle.inactiveForeground":"#D2D5DF","statusBar.background":"#2F3749","statusBar.foreground":"#F3F4F7","statusBar.border":"#41C4F7","statusBarItem.hoverBackground":"#52596E","tab.activeBackground":"#EB943A","tab.activeForeground":"#2F3749","tab.activeBorder":"#EB943A","tab.activeBorderTop":"#EB943A","tab.unfocusedActiveBackground":"#EB943A","tab.unfocusedActiveForeground":"#2F3749","tab.unfocusedActiveBorder":"#EB943A","tab.unfocusedActiveBorderTop":"#EB943A","tab.selectedBackground":"#EB943A","tab.selectedForeground":"#2F3749","tab.selectedBorderTop":"#EB943A","tab.inactiveBackground":"#1C3C55","tab.inactiveForeground":"#D2D5DF","tab.unfocusedInactiveBackground":"#1C3C55","tab.unfocusedInactiveForeground":"#D2D5DF","titleBar.activeBackground":"#1C3C55","titleBar.activeForeground":"#F3F4F7","titleBar.inactiveBackground":"#1C3C55","titleBar.inactiveForeground":"#D2D5DF","terminal.background":"#09131A","terminal.foreground":"#F3F4F7","terminalCursor.foreground":"#FF977B","terminal.ansiBlack":"#1C3C55","terminal.ansiBrightBlack":"#6D748C","terminal.ansiRed":"#FF977B","terminal.ansiBrightRed":"#FF977B","terminal.ansiGreen":"#D29B7F","terminal.ansiBrightGreen":"#FCC19F","terminal.ansiYellow":"#EB943A","terminal.ansiBrightYellow":"#EDB378","terminal.ansiBlue":"#41C4F7","terminal.ansiBrightBlue":"#41C4F7","terminal.ansiMagenta":"#BAA4E5","terminal.ansiBrightMagenta":"#BAA4E5","terminal.ansiCyan":"#37A6D1","terminal.ansiBrightCyan":"#41C4F7","terminal.ansiWhite":"#D2D5DF","terminal.ansiBrightWhite":"#F3F4F7","diffEditor.insertedTextBorder":"#37A6D1","diffEditor.removedTextBorder":"#E7442A","gitDecoration.modifiedResourceForeground":"#EA9C72","gitDecoration.deletedResourceForeground":"#FF977B","gitDecoration.untrackedResourceForeground":"#D29B7F"},"tokenColors":[{"name":"Comments","scope":["comment","punctuation.definition.comment"],"settings":{"fontStyle":"italic","foreground":"#9EA5BA"}},{"name":"Keywords","scope":["keyword"],"settings":{"foreground":"#BAA4E5"}},{"name":"Control keywords","scope":["keyword.control","keyword.other","punctuation.definition.keyword"],"settings":{"foreground":"#BAA4E5"}},{"name":"Operators","scope":["keyword.operator","keyword.operator.assignment","keyword.operator.arithmetic","keyword.operator.comparison","keyword.operator.logical","keyword.operator.type"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage","scope":["storage","token.storage"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage modifiers","scope":["storage.modifier"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage types","scope":["storage.type"],"settings":{"foreground":"#FF977B"}},{"name":"PHP visibility and storage modifiers","scope":["storage.modifier.php","storage.modifier.visibility.php"],"settings":{"foreground":"#BAA4E5"}},{"name":"PHP function declarations","scope":["storage.type.function.php","storage.type.function.arrow.php"],"settings":{"foreground":"#41C4F7"}},{"name":"TypeScript export keywords","scope":["keyword.control.export.ts","keyword.control.export.js"],"settings":{"foreground":"#41C4F7"}},{"name":"TypeScript class keywords","scope":["storage.type.class.ts","storage.type.class.js"],"settings":{"foreground":"#BAA4E5"}},{"name":"Strings","scope":["string","constant.other.symbol","constant.regexp","markup.quoted"],"settings":{"foreground":"#FCC19F"}},{"name":"Numbers and constants","scope":["constant.numeric","constant.language","constant.character","constant.character.escape","constant.escape"],"settings":{"foreground":"#41C4F7"}},{"name":"Named constants and enum members","scope":["entity.name.constant","variable.other.constant","variable.other.enummember"],"settings":{"foreground":"#EDB378"}},{"name":"Variables","scope":["variable","support.other.variable","variable.other","variable.other.readwrite","variable.instance"],"settings":{"foreground":"#41C4F7"}},{"name":"Language variables","scope":["variable.language","variable.language.this","variable.language.self","variable.language.super"],"settings":{"foreground":"#D2D5DF"}},{"name":"Function parameters","scope":["variable.parameter","variable.parameter.function","entity.name.variable.parameter","function.parameter"],"settings":{"foreground":"#41C4F7"}},{"name":"Object properties","scope":["variable.other.property","variable.other.object.property","support.variable.property","meta.property-name","meta.object-literal.key","support.type.property-name"],"settings":{"foreground":"#F3F4F7"}},{"name":"Functions","scope":["entity.name.function","entity.name.function.method","entity.name.function.constructor","variable.function"],"settings":{"foreground":"#BAA4E5"}},{"name":"Library functions","scope":["support.function","support.function.construct","keyword.other.special-method"],"settings":{"foreground":"#EDB378"}},{"name":"Library constants and variables","scope":["support.constant","support.variable"],"settings":{"foreground":"#EDB378"}},{"name":"Decorators","scope":["meta.decorator","entity.name.function.decorator","entity.name.function.decorator.ts","support.token.decorator"],"settings":{"foreground":"#BAA4E5"}},{"name":"Types","scope":["entity.name.type","entity.name.type.type-parameter","support.type","support.type.primitive"],"settings":{"foreground":"#EDB378"}},{"name":"Class names and library classes","scope":["entity.name.class","entity.name.type.class","entity.other.inherited-class","support.class","support.class.component"],"settings":{"foreground":"#D2D5DF"}},{"name":"Namespaces and modules","scope":["entity.name.namespace","entity.name.type.module"],"settings":{"foreground":"#D2D5DF"}},{"name":"Tag names","scope":["entity.name.tag","entity.name.tag.html","entity.name.tag.xml","support.tag"],"settings":{"foreground":"#41C4F7"}},{"name":"Attribute names","scope":["entity.other.attribute-name","entity.other.attribute-name.html","entity.other.attribute-name.xml","entity.other.attribute-name.id","entity.other.attribute-name.class"],"settings":{"foreground":"#BAA4E5"}},{"name":"HTML attribute values","scope":["string.quoted.double.html","string.quoted.single.html","string.unquoted.html"],"settings":{"foreground":"#FCC19F"}},{"name":"Tag punctuation","scope":["punctuation.definition.tag","punctuation.definition.tag.html","punctuation.definition.tag.xml"],"settings":{"foreground":"#D2D5DF"}},{"name":"Markup headings","scope":["markup.heading","entity.name.section"],"settings":{"foreground":"#FF977B"}},{"name":"Invalid","scope":["invalid","invalid.illegal","invalid.deprecated"],"settings":{"foreground":"#FF977B"}}],"semanticTokenColors":{"comment":"#9EA5BA","string":"#FCC19F","number":"#41C4F7","regexp":"#FCC19F","operator":"#41C4F7","function":"#BAA4E5","function.defaultLibrary":"#EDB378","method":"#BAA4E5","decorator":"#BAA4E5","macro":"#BAA4E5","keyword":"#BAA4E5","modifier":"#41C4F7","label":"#EDB378","event":"#BAA4E5","namespace":"#D2D5DF","type":"#EDB378","type.defaultLibrary":"#EDB378","class":"#D2D5DF","class.defaultLibrary":"#D2D5DF","interface":"#EDB378","enum":"#EDB378","enumMember":"#EDB378","typeParameter":"#EDB378","variable":"#41C4F7","variable.defaultLibrary":"#EDB378","variable.constant":"#EDB378","variable.readonly":"#41C4F7","property":"#F3F4F7","property.readonly":"#F3F4F7","member":"#F3F4F7","parameter":"#41C4F7","method.defaultLibrary":"#EDB378"},"themeName":"LCARS"},"Picard":{"label":"Picard","primary":"#FF977B","colors":{"focusBorder":"#FF977B","foreground":"#F3F4F7","disabledForeground":"#D2D5DF","descriptionForeground":"#D2D5DF","errorForeground":"#FF977B","icon.foreground":"#EDB378","textLink.foreground":"#FF977B","textLink.activeForeground":"#FF977B","textBlockQuote.background":"#2F3749","textBlockQuote.border":"#FF977B","button.background":"#1C3C55","button.foreground":"#F3F4F7","button.border":"#FF977B","button.hoverBackground":"#2A7193","button.secondaryBackground":"#FF977B","button.secondaryForeground":"#1C3C55","button.secondaryHoverBackground":"#FCC19F","dropdown.background":"#765251","dropdown.foreground":"#F3F4F7","dropdown.border":"#FF977B","input.background":"#765251","input.foreground":"#F3F4F7","input.border":"#FF977B","input.placeholderForeground":"#9EA5BA","badge.background":"#FF977B","badge.foreground":"#1C3C55","activityBar.background":"#4F3F42","activityBar.foreground":"#FF977B","activityBar.inactiveForeground":"#D2D5DF","activityBarBadge.background":"#FF977B","activityBarBadge.foreground":"#1C3C55","sideBar.background":"#5A3D3A","sideBar.foreground":"#F3F4F7","sideBarTitle.foreground":"#FF977B","sideBarSectionHeader.background":"#735454","sideBarSectionHeader.foreground":"#F3F4F7","sideBar.border":"#FF977B","list.activeSelectionBackground":"#1C3C55","list.activeSelectionForeground":"#F3F4F7","list.activeSelectionIconForeground":"#FF977B","list.inactiveSelectionBackground":"#735454","list.inactiveSelectionForeground":"#F3F4F7","list.inactiveSelectionIconForeground":"#D2D5DF","list.hoverBackground":"#EDB37840","list.hoverForeground":"#F3F4F7","list.focusOutline":"#FF977B","editor.background":"#4D3430","editor.foreground":"#F3F4F7","editorLineNumber.foreground":"#9EA5BA","editorLineNumber.activeForeground":"#FCC19F","editorCursor.foreground":"#FF977B","editor.selectionBackground":"#7A506D40","editor.selectionForeground":"#F3F4F7","editor.inactiveSelectionBackground":"#52596E","editor.lineHighlightBackground":"#2F3749","editorWhitespace.foreground":"#6D748C","editorIndentGuide.background1":"#52596E","editorIndentGuide.activeBackground1":"#FF977B","editorWidget.background":"#765251","editorWidget.foreground":"#F3F4F7","editorWidget.border":"#FF977B","editorSuggestWidget.background":"#765251","editorSuggestWidget.foreground":"#F3F4F7","editorSuggestWidget.selectedBackground":"#FF977B","editorSuggestWidget.selectedForeground":"#1C3C55","editorSuggestWidget.highlightForeground":"#FCC19F","editorHoverWidget.background":"#765251","editorHoverWidget.border":"#FF977B","editorBracketMatch.background":"#895129","editorBracketMatch.border":"#FF977B","editorError.foreground":"#FF2200","editorWarning.foreground":"#EA9C72","editorInfo.foreground":"#37A6D1","editorHint.foreground":"#8A72A7","editorGutter.addedBackground":"#FF6753","editorGutter.deletedBackground":"#E7442A","editorOverviewRuler.border":"#1C3C55","editorOverviewRuler.findMatchForeground":"#7A506D","editorOverviewRuler.modifiedForeground":"#C47D69","editorOverviewRuler.selectionHighlightForeground":"#9D698A","editorOverviewRuler.wordHighlightForeground":"#8899FF","editorOverviewRuler.wordHighlightStrongForeground":"#8A72A7","minimap.background":"#2A7193","editorGroupHeader.tabsBackground":"#4D3430","panel.background":"#4F3F42","panel.border":"#FF977B","panelTitle.activeForeground":"#FF977B","panelTitle.inactiveForeground":"#D2D5DF","statusBar.background":"#765251","statusBar.foreground":"#F3F4F7","statusBar.border":"#FF977B","statusBarItem.hoverBackground":"#735454","tab.activeBackground":"#735454","tab.activeForeground":"#F3F4F7","tab.activeBorder":"#FF977B","tab.activeBorderTop":"#FF977B","tab.unfocusedActiveBackground":"#735454","tab.unfocusedActiveForeground":"#F3F4F7","tab.unfocusedActiveBorder":"#FF977B","tab.unfocusedActiveBorderTop":"#FF977B","tab.selectedBackground":"#735454","tab.selectedForeground":"#F3F4F7","tab.selectedBorderTop":"#FF977B","tab.inactiveBackground":"#6D5556","tab.inactiveForeground":"#D2D5DF","tab.unfocusedInactiveBackground":"#6D5556","tab.unfocusedInactiveForeground":"#D2D5DF","titleBar.activeBackground":"#6D5556","titleBar.activeForeground":"#F3F4F7","titleBar.inactiveBackground":"#6D5556","titleBar.inactiveForeground":"#D2D5DF","terminal.background":"#4D3430","terminal.foreground":"#F3F4F7","terminalCursor.foreground":"#FF977B","terminal.ansiBlack":"#1C3C55","terminal.ansiBrightBlack":"#6D748C","terminal.ansiRed":"#FF977B","terminal.ansiBrightRed":"#FF977B","terminal.ansiGreen":"#D29B7F","terminal.ansiBrightGreen":"#FCC19F","terminal.ansiYellow":"#EB943A","terminal.ansiBrightYellow":"#EDB378","terminal.ansiBlue":"#FF977B","terminal.ansiBrightBlue":"#FF977B","terminal.ansiMagenta":"#BAA4E5","terminal.ansiBrightMagenta":"#BAA4E5","terminal.ansiCyan":"#37A6D1","terminal.ansiBrightCyan":"#FF977B","terminal.ansiWhite":"#D2D5DF","terminal.ansiBrightWhite":"#F3F4F7","diffEditor.insertedTextBorder":"#37A6D1","diffEditor.removedTextBorder":"#E7442A","gitDecoration.modifiedResourceForeground":"#EA9C72","gitDecoration.deletedResourceForeground":"#FF977B","gitDecoration.untrackedResourceForeground":"#D29B7F"},"tokenColors":[{"name":"Comments","scope":["comment","punctuation.definition.comment"],"settings":{"fontStyle":"italic","foreground":"#9EA5BA"}},{"name":"Keywords","scope":["keyword"],"settings":{"foreground":"#BAA4E5"}},{"name":"Control keywords","scope":["keyword.control","keyword.other","punctuation.definition.keyword"],"settings":{"foreground":"#BAA4E5"}},{"name":"Operators","scope":["keyword.operator","keyword.operator.assignment","keyword.operator.arithmetic","keyword.operator.comparison","keyword.operator.logical","keyword.operator.type"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage","scope":["storage","token.storage"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage modifiers","scope":["storage.modifier"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage types","scope":["storage.type"],"settings":{"foreground":"#FF977B"}},{"name":"PHP visibility and storage modifiers","scope":["storage.modifier.php","storage.modifier.visibility.php"],"settings":{"foreground":"#BAA4E5"}},{"name":"PHP function declarations","scope":["storage.type.function.php","storage.type.function.arrow.php"],"settings":{"foreground":"#41C4F7"}},{"name":"TypeScript export keywords","scope":["keyword.control.export.ts","keyword.control.export.js"],"settings":{"foreground":"#41C4F7"}},{"name":"TypeScript class keywords","scope":["storage.type.class.ts","storage.type.class.js"],"settings":{"foreground":"#BAA4E5"}},{"name":"Strings","scope":["string","constant.other.symbol","constant.regexp","markup.quoted"],"settings":{"foreground":"#FCC19F"}},{"name":"Numbers and constants","scope":["constant.numeric","constant.language","constant.character","constant.character.escape","constant.escape"],"settings":{"foreground":"#41C4F7"}},{"name":"Named constants and enum members","scope":["entity.name.constant","variable.other.constant","variable.other.enummember"],"settings":{"foreground":"#EDB378"}},{"name":"Variables","scope":["variable","support.other.variable","variable.other","variable.other.readwrite","variable.instance"],"settings":{"foreground":"#41C4F7"}},{"name":"Language variables","scope":["variable.language","variable.language.this","variable.language.self","variable.language.super"],"settings":{"foreground":"#D2D5DF"}},{"name":"Function parameters","scope":["variable.parameter","variable.parameter.function","entity.name.variable.parameter","function.parameter"],"settings":{"foreground":"#41C4F7"}},{"name":"Object properties","scope":["variable.other.property","variable.other.object.property","support.variable.property","meta.property-name","meta.object-literal.key","support.type.property-name"],"settings":{"foreground":"#F3F4F7"}},{"name":"Functions","scope":["entity.name.function","entity.name.function.method","entity.name.function.constructor","variable.function"],"settings":{"foreground":"#BAA4E5"}},{"name":"Library functions","scope":["support.function","support.function.construct","keyword.other.special-method"],"settings":{"foreground":"#EDB378"}},{"name":"Library constants and variables","scope":["support.constant","support.variable"],"settings":{"foreground":"#EDB378"}},{"name":"Decorators","scope":["meta.decorator","entity.name.function.decorator","entity.name.function.decorator.ts","support.token.decorator"],"settings":{"foreground":"#BAA4E5"}},{"name":"Types","scope":["entity.name.type","entity.name.type.type-parameter","support.type","support.type.primitive"],"settings":{"foreground":"#EDB378"}},{"name":"Class names and library classes","scope":["entity.name.class","entity.name.type.class","entity.other.inherited-class","support.class","support.class.component"],"settings":{"foreground":"#D2D5DF"}},{"name":"Namespaces and modules","scope":["entity.name.namespace","entity.name.type.module"],"settings":{"foreground":"#D2D5DF"}},{"name":"Tag names","scope":["entity.name.tag","entity.name.tag.html","entity.name.tag.xml","support.tag"],"settings":{"foreground":"#41C4F7"}},{"name":"Attribute names","scope":["entity.other.attribute-name","entity.other.attribute-name.html","entity.other.attribute-name.xml","entity.other.attribute-name.id","entity.other.attribute-name.class"],"settings":{"foreground":"#BAA4E5"}},{"name":"HTML attribute values","scope":["string.quoted.double.html","string.quoted.single.html","string.unquoted.html"],"settings":{"foreground":"#FCC19F"}},{"name":"Tag punctuation","scope":["punctuation.definition.tag","punctuation.definition.tag.html","punctuation.definition.tag.xml"],"settings":{"foreground":"#D2D5DF"}},{"name":"Markup headings","scope":["markup.heading","entity.name.section"],"settings":{"foreground":"#FF977B"}},{"name":"Invalid","scope":["invalid","invalid.illegal","invalid.deprecated"],"settings":{"foreground":"#FF977B"}}],"semanticTokenColors":{"comment":"#9EA5BA","string":"#FCC19F","number":"#41C4F7","regexp":"#FCC19F","operator":"#41C4F7","function":"#BAA4E5","function.defaultLibrary":"#EDB378","method":"#BAA4E5","decorator":"#BAA4E5","macro":"#BAA4E5","keyword":"#BAA4E5","modifier":"#41C4F7","label":"#EDB378","event":"#BAA4E5","namespace":"#D2D5DF","type":"#EDB378","type.defaultLibrary":"#EDB378","class":"#D2D5DF","class.defaultLibrary":"#D2D5DF","interface":"#EDB378","enum":"#EDB378","enumMember":"#EDB378","typeParameter":"#EDB378","variable":"#41C4F7","variable.defaultLibrary":"#EDB378","variable.constant":"#EDB378","variable.readonly":"#41C4F7","property":"#F3F4F7","property.readonly":"#F3F4F7","member":"#F3F4F7","parameter":"#41C4F7","method.defaultLibrary":"#EDB378"},"themeName":"LCARS: Picard"},"Troi":{"label":"Troi","primary":"#BAA4E5","colors":{"focusBorder":"#BAA4E5","foreground":"#F3F4F7","disabledForeground":"#D2D5DF","descriptionForeground":"#D2D5DF","errorForeground":"#FF977B","icon.foreground":"#EDB378","textLink.foreground":"#BAA4E5","textLink.activeForeground":"#BAA4E5","textBlockQuote.background":"#2F3749","textBlockQuote.border":"#BAA4E5","button.background":"#1C3C55","button.foreground":"#F3F4F7","button.border":"#BAA4E5","button.hoverBackground":"#2A7193","button.secondaryBackground":"#BAA4E5","button.secondaryForeground":"#1C3C55","button.secondaryHoverBackground":"#FCC19F","dropdown.background":"#5C5778","dropdown.foreground":"#F3F4F7","dropdown.border":"#BAA4E5","input.background":"#5C5778","input.foreground":"#F3F4F7","input.border":"#BAA4E5","input.placeholderForeground":"#9EA5BA","badge.background":"#BAA4E5","badge.foreground":"#1C3C55","activityBar.background":"#383F59","activityBar.foreground":"#BAA4E5","activityBar.inactiveForeground":"#D2D5DF","activityBarBadge.background":"#BAA4E5","activityBarBadge.foreground":"#1C3C55","sideBar.background":"#433E56","sideBar.foreground":"#F3F4F7","sideBarTitle.foreground":"#BAA4E5","sideBarSectionHeader.background":"#5D5976","sideBarSectionHeader.foreground":"#F3F4F7","sideBar.border":"#BAA4E5","list.activeSelectionBackground":"#1C3C55","list.activeSelectionForeground":"#F3F4F7","list.activeSelectionIconForeground":"#BAA4E5","list.inactiveSelectionBackground":"#5D5976","list.inactiveSelectionForeground":"#F3F4F7","list.inactiveSelectionIconForeground":"#D2D5DF","list.hoverBackground":"#EDB37840","list.hoverForeground":"#F3F4F7","list.focusOutline":"#BAA4E5","editor.background":"#39384F","editor.foreground":"#F3F4F7","editorLineNumber.foreground":"#9EA5BA","editorLineNumber.activeForeground":"#FCC19F","editorCursor.foreground":"#FF977B","editor.selectionBackground":"#7A506D40","editor.selectionForeground":"#F3F4F7","editor.inactiveSelectionBackground":"#52596E","editor.lineHighlightBackground":"#2F3749","editorWhitespace.foreground":"#6D748C","editorIndentGuide.background1":"#52596E","editorIndentGuide.activeBackground1":"#BAA4E5","editorWidget.background":"#5C5778","editorWidget.foreground":"#F3F4F7","editorWidget.border":"#BAA4E5","editorSuggestWidget.background":"#5C5778","editorSuggestWidget.foreground":"#F3F4F7","editorSuggestWidget.selectedBackground":"#BAA4E5","editorSuggestWidget.selectedForeground":"#1C3C55","editorSuggestWidget.highlightForeground":"#FCC19F","editorHoverWidget.background":"#5C5778","editorHoverWidget.border":"#BAA4E5","editorBracketMatch.background":"#895129","editorBracketMatch.border":"#BAA4E5","editorError.foreground":"#FF2200","editorWarning.foreground":"#EA9C72","editorInfo.foreground":"#37A6D1","editorHint.foreground":"#8A72A7","editorGutter.addedBackground":"#FF6753","editorGutter.deletedBackground":"#E7442A","editorOverviewRuler.border":"#1C3C55","editorOverviewRuler.findMatchForeground":"#7A506D","editorOverviewRuler.modifiedForeground":"#C47D69","editorOverviewRuler.selectionHighlightForeground":"#9D698A","editorOverviewRuler.wordHighlightForeground":"#8899FF","editorOverviewRuler.wordHighlightStrongForeground":"#8A72A7","minimap.background":"#2A7193","editorGroupHeader.tabsBackground":"#39384F","panel.background":"#383F59","panel.border":"#BAA4E5","panelTitle.activeForeground":"#BAA4E5","panelTitle.inactiveForeground":"#D2D5DF","statusBar.background":"#5C5778","statusBar.foreground":"#F3F4F7","statusBar.border":"#BAA4E5","statusBarItem.hoverBackground":"#5D5976","tab.activeBackground":"#5D5976","tab.activeForeground":"#F3F4F7","tab.activeBorder":"#BAA4E5","tab.activeBorderTop":"#BAA4E5","tab.unfocusedActiveBackground":"#5D5976","tab.unfocusedActiveForeground":"#F3F4F7","tab.unfocusedActiveBorder":"#BAA4E5","tab.unfocusedActiveBorderTop":"#BAA4E5","tab.selectedBackground":"#5D5976","tab.selectedForeground":"#F3F4F7","tab.selectedBorderTop":"#BAA4E5","tab.inactiveBackground":"#535A7E","tab.inactiveForeground":"#D2D5DF","tab.unfocusedInactiveBackground":"#535A7E","tab.unfocusedInactiveForeground":"#D2D5DF","titleBar.activeBackground":"#535A7E","titleBar.activeForeground":"#F3F4F7","titleBar.inactiveBackground":"#535A7E","titleBar.inactiveForeground":"#D2D5DF","terminal.background":"#39384F","terminal.foreground":"#F3F4F7","terminalCursor.foreground":"#FF977B","terminal.ansiBlack":"#1C3C55","terminal.ansiBrightBlack":"#6D748C","terminal.ansiRed":"#FF977B","terminal.ansiBrightRed":"#FF977B","terminal.ansiGreen":"#D29B7F","terminal.ansiBrightGreen":"#FCC19F","terminal.ansiYellow":"#EB943A","terminal.ansiBrightYellow":"#EDB378","terminal.ansiBlue":"#BAA4E5","terminal.ansiBrightBlue":"#BAA4E5","terminal.ansiMagenta":"#BAA4E5","terminal.ansiBrightMagenta":"#BAA4E5","terminal.ansiCyan":"#37A6D1","terminal.ansiBrightCyan":"#BAA4E5","terminal.ansiWhite":"#D2D5DF","terminal.ansiBrightWhite":"#F3F4F7","diffEditor.insertedTextBorder":"#37A6D1","diffEditor.removedTextBorder":"#E7442A","gitDecoration.modifiedResourceForeground":"#EA9C72","gitDecoration.deletedResourceForeground":"#FF977B","gitDecoration.untrackedResourceForeground":"#D29B7F"},"tokenColors":[{"name":"Comments","scope":["comment","punctuation.definition.comment"],"settings":{"fontStyle":"italic","foreground":"#9EA5BA"}},{"name":"Keywords","scope":["keyword"],"settings":{"foreground":"#BAA4E5"}},{"name":"Control keywords","scope":["keyword.control","keyword.other","punctuation.definition.keyword"],"settings":{"foreground":"#BAA4E5"}},{"name":"Operators","scope":["keyword.operator","keyword.operator.assignment","keyword.operator.arithmetic","keyword.operator.comparison","keyword.operator.logical","keyword.operator.type"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage","scope":["storage","token.storage"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage modifiers","scope":["storage.modifier"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage types","scope":["storage.type"],"settings":{"foreground":"#FF977B"}},{"name":"PHP visibility and storage modifiers","scope":["storage.modifier.php","storage.modifier.visibility.php"],"settings":{"foreground":"#BAA4E5"}},{"name":"PHP function declarations","scope":["storage.type.function.php","storage.type.function.arrow.php"],"settings":{"foreground":"#41C4F7"}},{"name":"TypeScript export keywords","scope":["keyword.control.export.ts","keyword.control.export.js"],"settings":{"foreground":"#41C4F7"}},{"name":"TypeScript class keywords","scope":["storage.type.class.ts","storage.type.class.js"],"settings":{"foreground":"#BAA4E5"}},{"name":"Strings","scope":["string","constant.other.symbol","constant.regexp","markup.quoted"],"settings":{"foreground":"#FCC19F"}},{"name":"Numbers and constants","scope":["constant.numeric","constant.language","constant.character","constant.character.escape","constant.escape"],"settings":{"foreground":"#41C4F7"}},{"name":"Named constants and enum members","scope":["entity.name.constant","variable.other.constant","variable.other.enummember"],"settings":{"foreground":"#EDB378"}},{"name":"Variables","scope":["variable","support.other.variable","variable.other","variable.other.readwrite","variable.instance"],"settings":{"foreground":"#41C4F7"}},{"name":"Language variables","scope":["variable.language","variable.language.this","variable.language.self","variable.language.super"],"settings":{"foreground":"#D2D5DF"}},{"name":"Function parameters","scope":["variable.parameter","variable.parameter.function","entity.name.variable.parameter","function.parameter"],"settings":{"foreground":"#41C4F7"}},{"name":"Object properties","scope":["variable.other.property","variable.other.object.property","support.variable.property","meta.property-name","meta.object-literal.key","support.type.property-name"],"settings":{"foreground":"#F3F4F7"}},{"name":"Functions","scope":["entity.name.function","entity.name.function.method","entity.name.function.constructor","variable.function"],"settings":{"foreground":"#BAA4E5"}},{"name":"Library functions","scope":["support.function","support.function.construct","keyword.other.special-method"],"settings":{"foreground":"#EDB378"}},{"name":"Library constants and variables","scope":["support.constant","support.variable"],"settings":{"foreground":"#EDB378"}},{"name":"Decorators","scope":["meta.decorator","entity.name.function.decorator","entity.name.function.decorator.ts","support.token.decorator"],"settings":{"foreground":"#BAA4E5"}},{"name":"Types","scope":["entity.name.type","entity.name.type.type-parameter","support.type","support.type.primitive"],"settings":{"foreground":"#EDB378"}},{"name":"Class names and library classes","scope":["entity.name.class","entity.name.type.class","entity.other.inherited-class","support.class","support.class.component"],"settings":{"foreground":"#D2D5DF"}},{"name":"Namespaces and modules","scope":["entity.name.namespace","entity.name.type.module"],"settings":{"foreground":"#D2D5DF"}},{"name":"Tag names","scope":["entity.name.tag","entity.name.tag.html","entity.name.tag.xml","support.tag"],"settings":{"foreground":"#41C4F7"}},{"name":"Attribute names","scope":["entity.other.attribute-name","entity.other.attribute-name.html","entity.other.attribute-name.xml","entity.other.attribute-name.id","entity.other.attribute-name.class"],"settings":{"foreground":"#BAA4E5"}},{"name":"HTML attribute values","scope":["string.quoted.double.html","string.quoted.single.html","string.unquoted.html"],"settings":{"foreground":"#FCC19F"}},{"name":"Tag punctuation","scope":["punctuation.definition.tag","punctuation.definition.tag.html","punctuation.definition.tag.xml"],"settings":{"foreground":"#D2D5DF"}},{"name":"Markup headings","scope":["markup.heading","entity.name.section"],"settings":{"foreground":"#FF977B"}},{"name":"Invalid","scope":["invalid","invalid.illegal","invalid.deprecated"],"settings":{"foreground":"#FF977B"}}],"semanticTokenColors":{"comment":"#9EA5BA","string":"#FCC19F","number":"#41C4F7","regexp":"#FCC19F","operator":"#41C4F7","function":"#BAA4E5","function.defaultLibrary":"#EDB378","method":"#BAA4E5","decorator":"#BAA4E5","macro":"#BAA4E5","keyword":"#BAA4E5","modifier":"#41C4F7","label":"#EDB378","event":"#BAA4E5","namespace":"#D2D5DF","type":"#EDB378","type.defaultLibrary":"#EDB378","class":"#D2D5DF","class.defaultLibrary":"#D2D5DF","interface":"#EDB378","enum":"#EDB378","enumMember":"#EDB378","typeParameter":"#EDB378","variable":"#41C4F7","variable.defaultLibrary":"#EDB378","variable.constant":"#EDB378","variable.readonly":"#41C4F7","property":"#F3F4F7","property.readonly":"#F3F4F7","member":"#F3F4F7","parameter":"#41C4F7","method.defaultLibrary":"#EDB378"},"themeName":"LCARS: Troi"},"Data":{"label":"Data","primary":"#EDB378","colors":{"focusBorder":"#EDB378","foreground":"#F3F4F7","disabledForeground":"#D2D5DF","descriptionForeground":"#D2D5DF","errorForeground":"#FF977B","icon.foreground":"#EDB378","textLink.foreground":"#EDB378","textLink.activeForeground":"#EDB378","textBlockQuote.background":"#2F3749","textBlockQuote.border":"#EDB378","button.background":"#1C3C55","button.foreground":"#F3F4F7","button.border":"#EDB378","button.hoverBackground":"#2A7193","button.secondaryBackground":"#EDB378","button.secondaryForeground":"#1C3C55","button.secondaryHoverBackground":"#FCC19F","dropdown.background":"#6A594B","dropdown.foreground":"#F3F4F7","dropdown.border":"#EDB378","input.background":"#6A594B","input.foreground":"#F3F4F7","input.border":"#EDB378","input.placeholderForeground":"#9EA5BA","badge.background":"#EDB378","badge.foreground":"#1C3C55","activityBar.background":"#4E4C45","activityBar.foreground":"#EDB378","activityBar.inactiveForeground":"#D2D5DF","activityBarBadge.background":"#EDB378","activityBarBadge.foreground":"#1C3C55","sideBar.background":"#5A493B","sideBar.foreground":"#F3F4F7","sideBarTitle.foreground":"#EDB378","sideBarSectionHeader.background":"#67584E","sideBarSectionHeader.foreground":"#F3F4F7","sideBar.border":"#EDB378","list.activeSelectionBackground":"#1C3C55","list.activeSelectionForeground":"#F3F4F7","list.activeSelectionIconForeground":"#EDB378","list.inactiveSelectionBackground":"#67584E","list.inactiveSelectionForeground":"#F3F4F7","list.inactiveSelectionIconForeground":"#D2D5DF","list.hoverBackground":"#EDB37840","list.hoverForeground":"#F3F4F7","list.focusOutline":"#EDB378","editor.background":"#42392D","editor.foreground":"#F3F4F7","editorLineNumber.foreground":"#9EA5BA","editorLineNumber.activeForeground":"#FCC19F","editorCursor.foreground":"#FF977B","editor.selectionBackground":"#7A506D40","editor.selectionForeground":"#F3F4F7","editor.inactiveSelectionBackground":"#52596E","editor.lineHighlightBackground":"#2F3749","editorWhitespace.foreground":"#6D748C","editorIndentGuide.background1":"#52596E","editorIndentGuide.activeBackground1":"#EDB378","editorWidget.background":"#6A594B","editorWidget.foreground":"#F3F4F7","editorWidget.border":"#EDB378","editorSuggestWidget.background":"#6A594B","editorSuggestWidget.foreground":"#F3F4F7","editorSuggestWidget.selectedBackground":"#EDB378","editorSuggestWidget.selectedForeground":"#1C3C55","editorSuggestWidget.highlightForeground":"#FCC19F","editorHoverWidget.background":"#6A594B","editorHoverWidget.border":"#EDB378","editorBracketMatch.background":"#895129","editorBracketMatch.border":"#EDB378","editorError.foreground":"#FF2200","editorWarning.foreground":"#EA9C72","editorInfo.foreground":"#37A6D1","editorHint.foreground":"#8A72A7","editorGutter.addedBackground":"#FF6753","editorGutter.deletedBackground":"#E7442A","editorOverviewRuler.border":"#1C3C55","editorOverviewRuler.findMatchForeground":"#7A506D","editorOverviewRuler.modifiedForeground":"#C47D69","editorOverviewRuler.selectionHighlightForeground":"#9D698A","editorOverviewRuler.wordHighlightForeground":"#8899FF","editorOverviewRuler.wordHighlightStrongForeground":"#8A72A7","minimap.background":"#2A7193","editorGroupHeader.tabsBackground":"#42392D","panel.background":"#4E4C45","panel.border":"#EDB378","panelTitle.activeForeground":"#EDB378","panelTitle.inactiveForeground":"#D2D5DF","statusBar.background":"#6A594B","statusBar.foreground":"#F3F4F7","statusBar.border":"#EDB378","statusBarItem.hoverBackground":"#67584E","tab.activeBackground":"#67584E","tab.activeForeground":"#F3F4F7","tab.activeBorder":"#EDB378","tab.activeBorderTop":"#EDB378","tab.unfocusedActiveBackground":"#67584E","tab.unfocusedActiveForeground":"#F3F4F7","tab.unfocusedActiveBorder":"#EDB378","tab.unfocusedActiveBorderTop":"#EDB378","tab.selectedBackground":"#67584E","tab.selectedForeground":"#F3F4F7","tab.selectedBorderTop":"#EDB378","tab.inactiveBackground":"#625B51","tab.inactiveForeground":"#D2D5DF","tab.unfocusedInactiveBackground":"#625B51","tab.unfocusedInactiveForeground":"#D2D5DF","titleBar.activeBackground":"#625B51","titleBar.activeForeground":"#F3F4F7","titleBar.inactiveBackground":"#625B51","titleBar.inactiveForeground":"#D2D5DF","terminal.background":"#42392D","terminal.foreground":"#F3F4F7","terminalCursor.foreground":"#FF977B","terminal.ansiBlack":"#1C3C55","terminal.ansiBrightBlack":"#6D748C","terminal.ansiRed":"#FF977B","terminal.ansiBrightRed":"#FF977B","terminal.ansiGreen":"#D29B7F","terminal.ansiBrightGreen":"#FCC19F","terminal.ansiYellow":"#EB943A","terminal.ansiBrightYellow":"#EDB378","terminal.ansiBlue":"#EDB378","terminal.ansiBrightBlue":"#EDB378","terminal.ansiMagenta":"#BAA4E5","terminal.ansiBrightMagenta":"#BAA4E5","terminal.ansiCyan":"#37A6D1","terminal.ansiBrightCyan":"#EDB378","terminal.ansiWhite":"#D2D5DF","terminal.ansiBrightWhite":"#F3F4F7","diffEditor.insertedTextBorder":"#37A6D1","diffEditor.removedTextBorder":"#E7442A","gitDecoration.modifiedResourceForeground":"#EA9C72","gitDecoration.deletedResourceForeground":"#FF977B","gitDecoration.untrackedResourceForeground":"#D29B7F"},"tokenColors":[{"name":"Comments","scope":["comment","punctuation.definition.comment"],"settings":{"fontStyle":"italic","foreground":"#9EA5BA"}},{"name":"Keywords","scope":["keyword"],"settings":{"foreground":"#BAA4E5"}},{"name":"Control keywords","scope":["keyword.control","keyword.other","punctuation.definition.keyword"],"settings":{"foreground":"#BAA4E5"}},{"name":"Operators","scope":["keyword.operator","keyword.operator.assignment","keyword.operator.arithmetic","keyword.operator.comparison","keyword.operator.logical","keyword.operator.type"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage","scope":["storage","token.storage"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage modifiers","scope":["storage.modifier"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage types","scope":["storage.type"],"settings":{"foreground":"#FF977B"}},{"name":"PHP visibility and storage modifiers","scope":["storage.modifier.php","storage.modifier.visibility.php"],"settings":{"foreground":"#BAA4E5"}},{"name":"PHP function declarations","scope":["storage.type.function.php","storage.type.function.arrow.php"],"settings":{"foreground":"#41C4F7"}},{"name":"TypeScript export keywords","scope":["keyword.control.export.ts","keyword.control.export.js"],"settings":{"foreground":"#41C4F7"}},{"name":"TypeScript class keywords","scope":["storage.type.class.ts","storage.type.class.js"],"settings":{"foreground":"#BAA4E5"}},{"name":"Strings","scope":["string","constant.other.symbol","constant.regexp","markup.quoted"],"settings":{"foreground":"#FCC19F"}},{"name":"Numbers and constants","scope":["constant.numeric","constant.language","constant.character","constant.character.escape","constant.escape"],"settings":{"foreground":"#41C4F7"}},{"name":"Named constants and enum members","scope":["entity.name.constant","variable.other.constant","variable.other.enummember"],"settings":{"foreground":"#EDB378"}},{"name":"Variables","scope":["variable","support.other.variable","variable.other","variable.other.readwrite","variable.instance"],"settings":{"foreground":"#41C4F7"}},{"name":"Language variables","scope":["variable.language","variable.language.this","variable.language.self","variable.language.super"],"settings":{"foreground":"#D2D5DF"}},{"name":"Function parameters","scope":["variable.parameter","variable.parameter.function","entity.name.variable.parameter","function.parameter"],"settings":{"foreground":"#41C4F7"}},{"name":"Object properties","scope":["variable.other.property","variable.other.object.property","support.variable.property","meta.property-name","meta.object-literal.key","support.type.property-name"],"settings":{"foreground":"#F3F4F7"}},{"name":"Functions","scope":["entity.name.function","entity.name.function.method","entity.name.function.constructor","variable.function"],"settings":{"foreground":"#BAA4E5"}},{"name":"Library functions","scope":["support.function","support.function.construct","keyword.other.special-method"],"settings":{"foreground":"#EDB378"}},{"name":"Library constants and variables","scope":["support.constant","support.variable"],"settings":{"foreground":"#EDB378"}},{"name":"Decorators","scope":["meta.decorator","entity.name.function.decorator","entity.name.function.decorator.ts","support.token.decorator"],"settings":{"foreground":"#BAA4E5"}},{"name":"Types","scope":["entity.name.type","entity.name.type.type-parameter","support.type","support.type.primitive"],"settings":{"foreground":"#EDB378"}},{"name":"Class names and library classes","scope":["entity.name.class","entity.name.type.class","entity.other.inherited-class","support.class","support.class.component"],"settings":{"foreground":"#D2D5DF"}},{"name":"Namespaces and modules","scope":["entity.name.namespace","entity.name.type.module"],"settings":{"foreground":"#D2D5DF"}},{"name":"Tag names","scope":["entity.name.tag","entity.name.tag.html","entity.name.tag.xml","support.tag"],"settings":{"foreground":"#41C4F7"}},{"name":"Attribute names","scope":["entity.other.attribute-name","entity.other.attribute-name.html","entity.other.attribute-name.xml","entity.other.attribute-name.id","entity.other.attribute-name.class"],"settings":{"foreground":"#BAA4E5"}},{"name":"HTML attribute values","scope":["string.quoted.double.html","string.quoted.single.html","string.unquoted.html"],"settings":{"foreground":"#FCC19F"}},{"name":"Tag punctuation","scope":["punctuation.definition.tag","punctuation.definition.tag.html","punctuation.definition.tag.xml"],"settings":{"foreground":"#D2D5DF"}},{"name":"Markup headings","scope":["markup.heading","entity.name.section"],"settings":{"foreground":"#FF977B"}},{"name":"Invalid","scope":["invalid","invalid.illegal","invalid.deprecated"],"settings":{"foreground":"#FF977B"}}],"semanticTokenColors":{"comment":"#9EA5BA","string":"#FCC19F","number":"#41C4F7","regexp":"#FCC19F","operator":"#41C4F7","function":"#BAA4E5","function.defaultLibrary":"#EDB378","method":"#BAA4E5","decorator":"#BAA4E5","macro":"#BAA4E5","keyword":"#BAA4E5","modifier":"#41C4F7","label":"#EDB378","event":"#BAA4E5","namespace":"#D2D5DF","type":"#EDB378","type.defaultLibrary":"#EDB378","class":"#D2D5DF","class.defaultLibrary":"#D2D5DF","interface":"#EDB378","enum":"#EDB378","enumMember":"#EDB378","typeParameter":"#EDB378","variable":"#41C4F7","variable.defaultLibrary":"#EDB378","variable.constant":"#EDB378","variable.readonly":"#41C4F7","property":"#F3F4F7","property.readonly":"#F3F4F7","member":"#F3F4F7","parameter":"#41C4F7","method.defaultLibrary":"#EDB378"},"themeName":"LCARS: Data"},"Crusher":{"label":"Crusher","primary":"#41C4F7","colors":{"focusBorder":"#41C4F7","foreground":"#F3F4F7","disabledForeground":"#D2D5DF","descriptionForeground":"#D2D5DF","errorForeground":"#FF977B","icon.foreground":"#EDB378","textLink.foreground":"#41C4F7","textLink.activeForeground":"#41C4F7","textBlockQuote.background":"#2F3749","textBlockQuote.border":"#41C4F7","button.background":"#1C3C55","button.foreground":"#F3F4F7","button.border":"#41C4F7","button.hoverBackground":"#2A7193","button.secondaryBackground":"#41C4F7","button.secondaryForeground":"#1C3C55","button.secondaryHoverBackground":"#FCC19F","dropdown.background":"#2D617C","dropdown.foreground":"#F3F4F7","dropdown.border":"#41C4F7","input.background":"#2D617C","input.foreground":"#F3F4F7","input.border":"#41C4F7","input.placeholderForeground":"#9EA5BA","badge.background":"#41C4F7","badge.foreground":"#1C3C55","activityBar.background":"#1C4B63","activityBar.foreground":"#41C4F7","activityBar.inactiveForeground":"#D2D5DF","activityBarBadge.background":"#41C4F7","activityBarBadge.foreground":"#1C3C55","sideBar.background":"#214C61","sideBar.foreground":"#F3F4F7","sideBarTitle.foreground":"#41C4F7","sideBarSectionHeader.background":"#346078","sideBarSectionHeader.foreground":"#F3F4F7","sideBar.border":"#41C4F7","list.activeSelectionBackground":"#1C3C55","list.activeSelectionForeground":"#F3F4F7","list.activeSelectionIconForeground":"#41C4F7","list.inactiveSelectionBackground":"#346078","list.inactiveSelectionForeground":"#F3F4F7","list.inactiveSelectionIconForeground":"#D2D5DF","list.hoverBackground":"#EDB37840","list.hoverForeground":"#F3F4F7","list.focusOutline":"#41C4F7","editor.background":"#163E50","editor.foreground":"#F3F4F7","editorLineNumber.foreground":"#9EA5BA","editorLineNumber.activeForeground":"#FCC19F","editorCursor.foreground":"#FF977B","editor.selectionBackground":"#7A506D40","editor.selectionForeground":"#F3F4F7","editor.inactiveSelectionBackground":"#52596E","editor.lineHighlightBackground":"#2F3749","editorWhitespace.foreground":"#6D748C","editorIndentGuide.background1":"#52596E","editorIndentGuide.activeBackground1":"#41C4F7","editorWidget.background":"#2D617C","editorWidget.foreground":"#F3F4F7","editorWidget.border":"#41C4F7","editorSuggestWidget.background":"#2D617C","editorSuggestWidget.foreground":"#F3F4F7","editorSuggestWidget.selectedBackground":"#41C4F7","editorSuggestWidget.selectedForeground":"#1C3C55","editorSuggestWidget.highlightForeground":"#FCC19F","editorHoverWidget.background":"#2D617C","editorHoverWidget.border":"#41C4F7","editorBracketMatch.background":"#895129","editorBracketMatch.border":"#41C4F7","editorError.foreground":"#FF2200","editorWarning.foreground":"#EA9C72","editorInfo.foreground":"#37A6D1","editorHint.foreground":"#8A72A7","editorGutter.addedBackground":"#FF6753","editorGutter.deletedBackground":"#E7442A","editorOverviewRuler.border":"#1C3C55","editorOverviewRuler.findMatchForeground":"#7A506D","editorOverviewRuler.modifiedForeground":"#C47D69","editorOverviewRuler.selectionHighlightForeground":"#9D698A","editorOverviewRuler.wordHighlightForeground":"#8899FF","editorOverviewRuler.wordHighlightStrongForeground":"#8A72A7","minimap.background":"#2A7193","editorGroupHeader.tabsBackground":"#163E50","panel.background":"#1C4B63","panel.border":"#41C4F7","panelTitle.activeForeground":"#41C4F7","panelTitle.inactiveForeground":"#D2D5DF","statusBar.background":"#2D617C","statusBar.foreground":"#F3F4F7","statusBar.border":"#41C4F7","statusBarItem.hoverBackground":"#346078","tab.activeBackground":"#346078","tab.activeForeground":"#F3F4F7","tab.activeBorder":"#41C4F7","tab.activeBorderTop":"#41C4F7","tab.unfocusedActiveBackground":"#346078","tab.unfocusedActiveForeground":"#F3F4F7","tab.unfocusedActiveBorder":"#41C4F7","tab.unfocusedActiveBorderTop":"#41C4F7","tab.selectedBackground":"#346078","tab.selectedForeground":"#F3F4F7","tab.selectedBorderTop":"#41C4F7","tab.inactiveBackground":"#24617E","tab.inactiveForeground":"#D2D5DF","tab.unfocusedInactiveBackground":"#24617E","tab.unfocusedInactiveForeground":"#D2D5DF","titleBar.activeBackground":"#24617E","titleBar.activeForeground":"#F3F4F7","titleBar.inactiveBackground":"#24617E","titleBar.inactiveForeground":"#D2D5DF","terminal.background":"#163E50","terminal.foreground":"#F3F4F7","terminalCursor.foreground":"#FF977B","terminal.ansiBlack":"#1C3C55","terminal.ansiBrightBlack":"#6D748C","terminal.ansiRed":"#FF977B","terminal.ansiBrightRed":"#FF977B","terminal.ansiGreen":"#D29B7F","terminal.ansiBrightGreen":"#FCC19F","terminal.ansiYellow":"#EB943A","terminal.ansiBrightYellow":"#EDB378","terminal.ansiBlue":"#41C4F7","terminal.ansiBrightBlue":"#41C4F7","terminal.ansiMagenta":"#41C4F7","terminal.ansiBrightMagenta":"#41C4F7","terminal.ansiCyan":"#37A6D1","terminal.ansiBrightCyan":"#41C4F7","terminal.ansiWhite":"#D2D5DF","terminal.ansiBrightWhite":"#F3F4F7","diffEditor.insertedTextBorder":"#37A6D1","diffEditor.removedTextBorder":"#E7442A","gitDecoration.modifiedResourceForeground":"#EA9C72","gitDecoration.deletedResourceForeground":"#FF977B","gitDecoration.untrackedResourceForeground":"#D29B7F"},"tokenColors":[{"name":"Comments","scope":["comment","punctuation.definition.comment"],"settings":{"fontStyle":"italic","foreground":"#9EA5BA"}},{"name":"Keywords","scope":["keyword"],"settings":{"foreground":"#BAA4E5"}},{"name":"Control keywords","scope":["keyword.control","keyword.other","punctuation.definition.keyword"],"settings":{"foreground":"#BAA4E5"}},{"name":"Operators","scope":["keyword.operator","keyword.operator.assignment","keyword.operator.arithmetic","keyword.operator.comparison","keyword.operator.logical","keyword.operator.type"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage","scope":["storage","token.storage"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage modifiers","scope":["storage.modifier"],"settings":{"foreground":"#41C4F7"}},{"name":"Storage types","scope":["storage.type"],"settings":{"foreground":"#FF977B"}},{"name":"PHP visibility and storage modifiers","scope":["storage.modifier.php","storage.modifier.visibility.php"],"settings":{"foreground":"#BAA4E5"}},{"name":"PHP function declarations","scope":["storage.type.function.php","storage.type.function.arrow.php"],"settings":{"foreground":"#41C4F7"}},{"name":"TypeScript export keywords","scope":["keyword.control.export.ts","keyword.control.export.js"],"settings":{"foreground":"#41C4F7"}},{"name":"TypeScript class keywords","scope":["storage.type.class.ts","storage.type.class.js"],"settings":{"foreground":"#BAA4E5"}},{"name":"Strings","scope":["string","constant.other.symbol","constant.regexp","markup.quoted"],"settings":{"foreground":"#FCC19F"}},{"name":"Numbers and constants","scope":["constant.numeric","constant.language","constant.character","constant.character.escape","constant.escape"],"settings":{"foreground":"#41C4F7"}},{"name":"Named constants and enum members","scope":["entity.name.constant","variable.other.constant","variable.other.enummember"],"settings":{"foreground":"#EDB378"}},{"name":"Variables","scope":["variable","support.other.variable","variable.other","variable.other.readwrite","variable.instance"],"settings":{"foreground":"#41C4F7"}},{"name":"Language variables","scope":["variable.language","variable.language.this","variable.language.self","variable.language.super"],"settings":{"foreground":"#D2D5DF"}},{"name":"Function parameters","scope":["variable.parameter","variable.parameter.function","entity.name.variable.parameter","function.parameter"],"settings":{"foreground":"#41C4F7"}},{"name":"Object properties","scope":["variable.other.property","variable.other.object.property","support.variable.property","meta.property-name","meta.object-literal.key","support.type.property-name"],"settings":{"foreground":"#F3F4F7"}},{"name":"Functions","scope":["entity.name.function","entity.name.function.method","entity.name.function.constructor","variable.function"],"settings":{"foreground":"#BAA4E5"}},{"name":"Library functions","scope":["support.function","support.function.construct","keyword.other.special-method"],"settings":{"foreground":"#EDB378"}},{"name":"Library constants and variables","scope":["support.constant","support.variable"],"settings":{"foreground":"#EDB378"}},{"name":"Decorators","scope":["meta.decorator","entity.name.function.decorator","entity.name.function.decorator.ts","support.token.decorator"],"settings":{"foreground":"#BAA4E5"}},{"name":"Types","scope":["entity.name.type","entity.name.type.type-parameter","support.type","support.type.primitive"],"settings":{"foreground":"#EDB378"}},{"name":"Class names and library classes","scope":["entity.name.class","entity.name.type.class","entity.other.inherited-class","support.class","support.class.component"],"settings":{"foreground":"#D2D5DF"}},{"name":"Namespaces and modules","scope":["entity.name.namespace","entity.name.type.module"],"settings":{"foreground":"#D2D5DF"}},{"name":"Tag names","scope":["entity.name.tag","entity.name.tag.html","entity.name.tag.xml","support.tag"],"settings":{"foreground":"#41C4F7"}},{"name":"Attribute names","scope":["entity.other.attribute-name","entity.other.attribute-name.html","entity.other.attribute-name.xml","entity.other.attribute-name.id","entity.other.attribute-name.class"],"settings":{"foreground":"#BAA4E5"}},{"name":"HTML attribute values","scope":["string.quoted.double.html","string.quoted.single.html","string.unquoted.html"],"settings":{"foreground":"#FCC19F"}},{"name":"Tag punctuation","scope":["punctuation.definition.tag","punctuation.definition.tag.html","punctuation.definition.tag.xml"],"settings":{"foreground":"#D2D5DF"}},{"name":"Markup headings","scope":["markup.heading","entity.name.section"],"settings":{"foreground":"#FF977B"}},{"name":"Invalid","scope":["invalid","invalid.illegal","invalid.deprecated"],"settings":{"foreground":"#FF977B"}}],"semanticTokenColors":{"comment":"#9EA5BA","string":"#FCC19F","number":"#41C4F7","regexp":"#FCC19F","operator":"#41C4F7","function":"#BAA4E5","function.defaultLibrary":"#EDB378","method":"#BAA4E5","decorator":"#BAA4E5","macro":"#BAA4E5","keyword":"#BAA4E5","modifier":"#41C4F7","label":"#EDB378","event":"#BAA4E5","namespace":"#D2D5DF","type":"#EDB378","type.defaultLibrary":"#EDB378","class":"#D2D5DF","class.defaultLibrary":"#D2D5DF","interface":"#EDB378","enum":"#EDB378","enumMember":"#EDB378","typeParameter":"#EDB378","variable":"#41C4F7","variable.defaultLibrary":"#EDB378","variable.constant":"#EDB378","variable.readonly":"#41C4F7","property":"#F3F4F7","property.readonly":"#F3F4F7","member":"#F3F4F7","parameter":"#41C4F7","method.defaultLibrary":"#EDB378"},"themeName":"LCARS: Crusher"}},"names":{"#BAA4E5":"African violet","#D29B7F":"Almond","#FCC19F":"Almond creme","#EDB378":"Barley","#8899FF":"Bluey","#895129":"Brown","#EA9C72":"Butterscotch","#7A506D":"Dirty mauve","#9D698A":"Dusty mauve","#8A72A7":"Lilac","#FF2200":"Mars","#EB943A":"Orange","#CF4F4F":"Red","#C47D69":"Subdued sienna","#C082A9":"True mauve","#37A6D1":"Blue","#41C4F7":"Bright blue","#1C3C55":"Dark blue","#2F3749":"Dark gray","#D2D5DF":"Ghost gray","#9EA5BA":"Light gray","#FF6753":"Light orange-red","#2A7193":"Medium dark blue","#52596E":"Medium dark gray","#E7442A":"Orange-red","#FF977B":"Pale orange-red","#6D748C":"Primary gray","#F3F4F7":"Starlight"}};
+const NAMES = BUNDLE.names;
+const THEMES_DATA = BUNDLE.themes;
+const THEME_ORDER = ["LCARS","Picard","Troi","Data","Crusher"];
+
+// Curated foreground/background pairs shown in the accessibility table.
+const A11Y_PAIRS = [
+  ["Editor text", "editor.foreground", "editor.background"],
+  ["Sidebar text", "sideBar.foreground", "sideBar.background"],
+  ["Sidebar title / icons", "sideBarTitle.foreground", "sideBar.background"],
+  ["Activity bar icons", "activityBar.foreground", "activityBar.background"],
+  ["Activity bar inactive icons", "activityBar.inactiveForeground", "activityBar.background"],
+  ["Panel title (active)", "panelTitle.activeForeground", "panel.background"],
+  ["Status bar text", "statusBar.foreground", "statusBar.background"],
+  ["Title bar text", "titleBar.activeForeground", "titleBar.activeBackground"],
+  ["Active tab text", "tab.activeForeground", "tab.activeBackground"],
+  ["Inactive tab text", "tab.inactiveForeground", "tab.inactiveBackground"],
+  ["Badge text", "badge.foreground", "badge.background"],
+  ["Secondary button text", "button.secondaryForeground", "button.secondaryBackground"],
+  ["Dropdown/input text", "input.foreground", "input.background"],
+  ["Editor widget text", "editorWidget.foreground", "editorWidget.background"],
+  ["Error/invalid text", "errorForeground", "editor.background"],
+];
+
+function slug(s){ return s.replace(/[^a-zA-Z0-9]+/g, "-"); }
+function cssVarForColorKey(key){ return `--c-${slug(key)}`; }
+function cssVarForToken(name){ return `--t-${slug(name)}`; }
+
+function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+function lum(hex){
+  hex = hex.replace('#','').slice(0,6);
+  let r = parseInt(hex.substr(0,2),16)/255, g = parseInt(hex.substr(2,2),16)/255, b = parseInt(hex.substr(4,2),16)/255;
+  const f = c => c <= 0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4);
+  r = f(r); g = f(g); b = f(b);
+  return 0.2126*r + 0.7152*g + 0.0722*b;
+}
+function contrast(h1, h2){
+  if(!h1 || !h2) return 0;
+  let l1 = lum(h1), l2 = lum(h2);
+  if (l1 < l2) [l1,l2] = [l2,l1];
+  return (l1 + 0.05) / (l2 + 0.05);
+}
+function rating(c){
+  if (c >= 7) return "AAA";
+  if (c >= 4.5) return "AA";
+  if (c >= 3) return "AA (large/UI)";
+  return "Fail";
+}
+
+// ---- App state ----
+const workingStates = {};
+let currentThemeKey = THEME_ORDER[0];
+
+function getState(themeKey){
+  if (!workingStates[themeKey]) {
+    workingStates[themeKey] = deepClone(THEMES_DATA[themeKey]);
+  }
+  return workingStates[themeKey];
+}
+
+function findTokenEntry(state, name){
+  return state.tokenColors.find(tc => tc.name === name);
+}
+function getTokenColor(state, name){
+  const entry = findTokenEntry(state, name);
+  return entry && entry.settings ? entry.settings.foreground : null;
+}
+function setTokenColor(state, name, value){
+  const entry = findTokenEntry(state, name);
+  if (entry && entry.settings) entry.settings.foreground = value;
+}
+
+function applyTheme(state){
+  const root = document.documentElement;
+  for (const [k, v] of Object.entries(state.colors)) {
+    if (typeof v === "string" && v.startsWith("#")) {
+      root.style.setProperty(cssVarForColorKey(k), v);
+    }
+  }
+  for (const tc of state.tokenColors) {
+    if (tc.settings && tc.settings.foreground) {
+      root.style.setProperty(cssVarForToken(tc.name), tc.settings.foreground);
+    }
+  }
+  document.getElementById("mockupHeading").textContent = `Live preview — ${state.label}`;
+  renderLegend(state);
+  renderA11y(state);
+}
+
+function renderLegend(state){
+  const grid = document.getElementById("swatchGrid");
+  grid.innerHTML = "";
+  const seen = new Set();
+  const hexes = [];
+  for (const v of Object.values(state.colors)) {
+    if (typeof v === "string" && v.startsWith("#")) {
+      const h = "#" + v.slice(1,7).toUpperCase();
+      if (!seen.has(h)) { seen.add(h); hexes.push(h); }
+    }
+  }
+  hexes.sort((a,b) => lum(b) - lum(a));
+  for (const h of hexes) {
+    const name = NAMES[h] || "Themed surface blend";
+    const isPrimary = h === state.primary;
+    const textColor = lum(h) > 0.35 ? "#1C3C55" : "#F3F4F7";
+    const div = document.createElement("div");
+    div.className = "swatch";
+    div.style.background = h;
+    div.style.color = textColor;
+    div.innerHTML = `<div class="swatch-hex">${h}</div><div class="swatch-name">${name}${isPrimary ? " ★ primary" : ""}</div>`;
+    div.addEventListener("click", () => openSwatchInspector(state, h, name));
+    grid.appendChild(div);
+  }
+}
+
+function renderA11y(state){
+  const body = document.getElementById("a11yBody");
+  body.innerHTML = "";
+  const commentEntry = findTokenEntry(state, "Comments");
+  const commentColor = commentEntry && commentEntry.settings ? commentEntry.settings.foreground : null;
+  const rows = A11Y_PAIRS.map(([label, fgKey, bgKey]) => [label, fgKey, bgKey, state.colors[fgKey], state.colors[bgKey]]);
+  if (commentColor) rows.push(["Comment text", "Comments (token)", "editor.background", commentColor, state.colors["editor.background"]]);
+  for (const [label, fgKey, bgKey, fg, bg] of rows) {
+    if (!fg || !bg) continue;
+    const c = contrast(fg, bg);
+    const r = rating(c);
+    const cls = c >= 4.5 ? "pass" : (c >= 3 ? "warn" : "fail");
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${label}</td><td><code>${fgKey}</code></td><td><code>${bgKey}</code></td>
+      <td class="demo-cell" style="background:${bg};color:${fg};">Aa Sample</td>
+      <td>${fg} on ${bg}</td><td>${c.toFixed(2)}:1</td><td class="${cls}">${r}</td>`;
+    body.appendChild(tr);
+  }
+}
+
+// ---- Inspector ----
+const overlay = document.getElementById("inspectorOverlay");
+const inspTitle = document.getElementById("inspectorTitle");
+const inspSub = document.getElementById("inspectorSub");
+const inspBody = document.getElementById("inspectorBody");
+
+function closeInspector(){ overlay.classList.remove("open"); }
+document.getElementById("inspectorClose").addEventListener("click", closeInspector);
+overlay.addEventListener("click", (e) => { if (e.target === overlay) closeInspector(); });
+
+function friendlyKey(k){
+  return k.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/\./g, " → ").replace(/^./, s => s.toUpperCase());
+}
+
+// Builds a grid of the approved palette swatches only — no arbitrary/native
+// color picker — so edits always stay within the documented LCARS palette.
+function buildPalettePicker(currentValue, onSelect){
+  const wrap = document.createElement("div");
+  wrap.className = "palette-picker";
+  const current = (currentValue || "").toUpperCase();
+  Object.keys(NAMES).forEach(hex => {
+    const chip = document.createElement("div");
+    chip.className = "palette-swatch" + (hex === current ? " selected" : "");
+    chip.style.background = hex;
+    chip.title = `${NAMES[hex]} (${hex})`;
+    chip.addEventListener("click", () => {
+      wrap.querySelectorAll(".palette-swatch").forEach(c => c.classList.remove("selected"));
+      chip.classList.add("selected");
+      onSelect(hex);
+    });
+    wrap.appendChild(chip);
+  });
+  return wrap;
+}
+
+function openElementInspector(el){
+  const state = getState(currentThemeKey);
+  const keys = el.dataset.keys.split(",");
+  inspTitle.textContent = el.dataset.label || "Element";
+  inspSub.textContent = "Edit any role bound to this element by picking a color from the approved LCARS palette. Changes update the live preview instantly.";
+  inspBody.innerHTML = "";
+  keys.forEach(k => {
+    const isToken = k.startsWith("token:");
+    const name = isToken ? k.slice(6).replace(/-/g," ") : k;
+    const value = isToken ? getTokenColor(state, name) : state.colors[name];
+    if (!value) return;
+    const row = document.createElement("div");
+    row.className = "inspector-row";
+    row.innerHTML = `<label>${isToken ? "Token: " + name : friendlyKey(name)}<code>${isToken ? "tokenColors: " + name : name} = ${value}</code></label>`;
+    const picker = buildPalettePicker(value, (newVal) => {
+      if (isToken) setTokenColor(state, name, newVal);
+      else state.colors[name] = newVal;
+      row.querySelector("code").textContent = `${isToken ? "tokenColors: " + name : name} = ${newVal}`;
+      applyTheme(state);
+    });
+    row.appendChild(picker);
+    inspBody.appendChild(row);
+  });
+  overlay.classList.add("open");
+}
+
+function openSwatchInspector(state, hex, name){
+  inspTitle.textContent = name;
+  inspSub.textContent = "This palette color is used in the roles below. Pick a replacement from the approved LCARS palette to update every one of them at once.";
+  inspBody.innerHTML = "";
+
+  const matchingColorKeys = Object.entries(state.colors)
+    .filter(([k, v]) => typeof v === "string" && v.toUpperCase() === hex)
+    .map(([k]) => k);
+  const matchingTokenNames = state.tokenColors
+    .filter(tc => tc.settings && tc.settings.foreground && tc.settings.foreground.toUpperCase() === hex)
+    .map(tc => tc.name);
+  const matchingSemanticKeys = Object.entries(state.semanticTokenColors || {})
+    .filter(([k, v]) => typeof v === "string" && v.toUpperCase() === hex)
+    .map(([k]) => k);
+
+  const row = document.createElement("div");
+  row.className = "inspector-row";
+  row.innerHTML = `<label>Change this color<code>${hex}</code></label>`;
+  const picker = buildPalettePicker(hex, (newVal) => {
+    matchingColorKeys.forEach(k => state.colors[k] = newVal);
+    matchingTokenNames.forEach(n => setTokenColor(state, n, newVal));
+    if (state.semanticTokenColors) {
+      matchingSemanticKeys.forEach(k => state.semanticTokenColors[k] = newVal);
+    }
+    row.querySelector("code").textContent = newVal;
+    applyTheme(state);
+  });
+  row.appendChild(picker);
+  inspBody.appendChild(row);
+
+  const usageWrap = document.createElement("ul");
+  usageWrap.className = "usage-list";
+  matchingColorKeys.forEach(k => usageWrap.innerHTML += `<li>${friendlyKey(k)} <code>(${k})</code></li>`);
+  matchingTokenNames.forEach(n => usageWrap.innerHTML += `<li>Syntax: ${n}</li>`);
+  matchingSemanticKeys.forEach(k => usageWrap.innerHTML += `<li>Semantic token: ${k}</li>`);
+  inspBody.appendChild(usageWrap);
+
+  overlay.classList.add("open");
+}
+
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("[data-keys]");
+  if (el) openElementInspector(el);
+});
+
+// ---- Theme switcher / reset / export ----
+const themeSelect = document.getElementById("themeSelect");
+THEME_ORDER.forEach(key => {
+  const opt = document.createElement("option");
+  opt.value = key;
+  opt.textContent = THEMES_DATA[key].label;
+  themeSelect.appendChild(opt);
+});
+themeSelect.addEventListener("change", () => {
+  currentThemeKey = themeSelect.value;
+  applyTheme(getState(currentThemeKey));
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  workingStates[currentThemeKey] = deepClone(THEMES_DATA[currentThemeKey]);
+  applyTheme(getState(currentThemeKey));
+});
+
+document.getElementById("exportBtn").addEventListener("click", () => {
+  const state = getState(currentThemeKey);
+  const themeJson = {
+    name: state.themeName,
+    type: "dark",
+    semanticHighlighting: true,
+    colors: state.colors,
+    tokenColors: state.tokenColors,
+    semanticTokenColors: state.semanticTokenColors,
+  };
+  const blob = new Blob([JSON.stringify(themeJson, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `LCARS-${state.label}-custom-color-theme.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+// ---- Init ----
+applyTheme(getState(currentThemeKey));
+</script>
+</body>
+</html>
