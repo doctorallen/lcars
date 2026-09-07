@@ -4,7 +4,7 @@
 
 Four additional themes reuse only colors already in the approved palette
 above, each assigning one approved accent as the theme's primary identity
-color for workbench UI chrome — focus rings, links, borders, buttons,
+color for workbench UI chrome — focus rings, links, buttons,
 badges, activity-bar icons, sidebar/panel titles, tabs, and the editor and
 terminal background surfaces. **Code syntax highlighting (`tokenColors` and
 `semanticTokenColors`) is identical across all five themes** — operators,
@@ -36,13 +36,73 @@ remains readable against every new primary (5.22:1–6.20:1, all AA). Diagnostic
 and semantic colors — error/warning/info/hint squiggles, gutters, overview
 rulers, diff borders, and Git decorations — are intentionally left unchanged
 in every theme so their meaning (e.g. red = error, green = added) stays
-consistent regardless of the active character theme.
+consistent regardless of the active character theme. Major workbench section
+separators (`sideBar.border`, `panel.border`, `surface.border`,
+`editor.border`, and `statusBar.border`) use the subdued dark neutral
+`#2F3749` in every theme instead of bright identity accents.
 
 VS Code controls tab geometry in the workbench; color themes only provide color
-roles. The focused, unfocused, selected, and inactive tab roles are all set
-explicitly in each theme so the modern workbench does not fall back to a stale
-or unrelated tab color. The palette reference page keeps the tab mock-up
+roles. The focused, unfocused, selected, inactive, and hover tab roles are all
+set explicitly in each theme so the workbench does not fall back to a stale or
+unrelated tab color. The palette reference page keeps the tab mock-up
 rectangular and delegates rounded-corner behavior to VS Code itself.
+
+## VS Code Modern UI tab roles
+
+VS Code 1.136.1's Modern UI reads a separate set of registered color IDs in
+addition to the legacy `tab.*` roles. Each LCARS theme explicitly defines the
+full `modernTab.*` and `modernEditorTab.*` families so active, inactive, hover,
+selected-action, and tab-action surfaces retain the selected character
+identity. The related `surface.*`, `modernActivityBar.*`, and
+`modernActivityBarItem.*` roles keep the surrounding framed workbench surfaces
+on the same identity as the sidebar and activity bar, while the structural
+surface/editor borders stay subdued. Explicit Modern UI roles
+take precedence over VS Code's legacy-to-modern compatibility bridge, so these
+values prevent the native tabs from resolving to unrelated list colors.
+
+The two tab families are intentionally independent. In the base LCARS theme,
+non-editor pane tabs such as the Chat tab use the orange
+`modernTab.activeBackground` (`#EB943A`) with dark-blue text, while editor tabs
+use the deep-blue `modernEditorTab.activeBackground` (`#1C3C55`) with
+starlight text. The character variants can use the same split with their own
+identity accent on pane tabs and their darker identity surface on editor tabs.
+
+`modernEditorTab.hoverBackground` and the other hover fills use an approved
+accent with transparency. Their `*ActionBackground` counterparts are opaque
+composites of that same accent over the theme's editor background, which keeps
+the close and other action areas visually continuous when VS Code overlays
+them. These derived values do not introduce additional palette hues.
+
+The `workbench.experimental.modernUI` setting enables the native rounded tab
+presentation. Radius, padding, spacing, shadows, and pill geometry remain
+owned by VS Code's Modern UI CSS; they are not encoded in these theme files.
+The official Modern UI color guide does not register a
+`modernEditorTab.*` border role. In VS Code 1.136.1, the native tab CSS can
+render both a top and bottom active-tab stroke, but its internal border
+variables default to transparent. VS Code's compatibility bridge populates
+those variables from `tab.activeBorder`, `tab.activeBorderTop`, and their
+unfocused counterparts only when those legacy roles are supplied through
+`workbench.colorCustomizations`.
+
+The user's theme-scoped color customizations therefore repeat each theme's
+active border colors: `tab.activeBorder` supplies the bottom stroke and
+`tab.activeBorderTop` supplies the top stroke. This is a VS Code runtime
+requirement, not a shape override or custom CSS injection; the theme files
+retain the same `tab.*` roles for legacy workbench rendering. The
+implementation follows the official [Modern UI
+theming reference](https://github.com/microsoft/vscode/blob/1.136.1/src/vs/workbench/contrib/modernUI/README.md),
+[native tab CSS](https://github.com/microsoft/vscode/blob/1.136.1/src/vs/workbench/contrib/modernUI/browser/media/tabs.css),
+[theme color reference](https://code.visualstudio.com/api/references/theme-color),
+and [VS Code 1.136 release notes](https://code.visualstudio.com/updates/v1_136).
+
+Modern UI intentionally preserves Git and problem decoration colors on
+decorated editor labels, so `gitDecoration.modifiedResourceForeground` remains
+visible on a working-tree file. The native
+`tab.*ModifiedBorder` roles provide an additional identity-colored top border
+for unsaved editor changes when
+`workbench.editor.highlightModifiedTabs` is enabled. Git working-tree status
+and unsaved editor state are separate signals: the `M` decoration identifies
+the former, while the border identifies the latter.
 
 Surface backgrounds are tinted the same way: each neutral base color (dark
 blue `#1C3C55`, dark gray `#2F3749`, medium dark gray `#52596E`) is
@@ -71,52 +131,44 @@ readable:
   contrast against starlight text is at least 6:1, since white text
   tolerates a richer, darker-saturated background.
 
-`editor.background`, `terminal.background`, and `sideBar.background` use two
-deeper, palette-derived neutrals rather than the standard dark blue/dark gray
-used elsewhere in the UI (buttons, activity bar, panel, title bar, status
-bar, and inactive tabs) — chosen to match a darker aesthetic while staying purely derived
-from the two approved dark neutrals:
+`editor.background`, `terminal.background`, and the editor tab strip use the
+same deep dark blue in every theme. This keeps the actual code surface
+consistent while allowing each character variant to retain its identity on the
+sidebar, activity bar, panel, title bar, tabs, and other workbench chrome. The
+shared editor surface stays purely derived from the approved dark neutrals:
 
 - **Deep dark blue** `#09131A` — dark blue `#1C3C55` darkened ~69% —
-  used for `editor.background` and `terminal.background` in the base LCARS
-  theme.
+  used for `editor.background`, `terminal.background`, and
+  `editorGroupHeader.tabsBackground` in all five themes.
 - **Deep dark gray** `#212633` — dark gray `#2F3749` darkened ~30% —
   used for `sideBar.background` in the base LCARS theme.
 
-Each character theme tints these same two deep neutrals toward its primary
-accent using the same blend-then-darken approach as the other surfaces, but
-with a floor tuned to what each surface actually needs:
+Each character theme keeps its sidebar tint while using the shared editor
+surface:
 
-- `editor.background`/`terminal.background`: blends 32–35% of the primary
-  into deep dark blue `#09131A`, darkened only as needed to keep the 8 syntax
-  colors that carry actual code text (comments, keywords, operators/storage,
-  strings, constants, object properties, class/namespace names, and plain
-  editor text) at ≥4.5:1 contrast. Final values: Picard `#4D3430`, Troi
-  `#39384F`, Data `#42392D`, Crusher `#163E50`.
-  The decorative/diagnostic colors that are not primary code text —
-  error/warning/info/hint squiggles, whitespace markers, overview-ruler
-  marks, and terminal ANSI colors — were intentionally excluded from that
-  floor and are left unchanged across all themes, since they carry universal
-  meaning and were already lower-contrast by design in the base theme.
-- `sideBar.background`: blends 40–47% of the primary into deep dark gray
-  `#212633`, darkened until contrast against the theme's primary-colored
-  `sideBarTitle.foreground` is at least 4.6:1. Final values: Picard
-  `#5A3D3A`, Troi `#433E56`, Data `#5A493B`, Crusher `#214C61`.
+- `editor.background` and `terminal.background` are `#09131A` in Picard,
+  Troi, Data, and Crusher as well as the base LCARS theme. Shared syntax
+  highlighting therefore has the same dark contrast target in every variant.
+- `sideBar.background` remains tinted for Picard `#5A3D3A`, Troi `#433E56`,
+  Data `#42392D`, and Crusher `#214C61`. Data also uses `#42392D` for its
+  activity bar, panel, title bar, and inactive tab surfaces; this raises the
+  barley and ghost-gray text contrast on those surfaces to at least 5.8:1.
+- Data's suggestion-widget match text uses starlight `#F3F4F7` rather than the
+  lower-contrast almond creme so highlighted results remain readable on its
+  warm widget surface.
 
-`activityBar.background` and `panel.background` still tint from the
-standard dark blue `#1C3C55` (not the deeper editor variant), and
-`statusBar.background` still tints from the standard dark gray `#2F3749`
-(not the deeper sidebar variant) — only the editor/terminal surface and the
-sidebar itself use the deeper neutrals. The lowest resulting contrast across
-all tinted surfaces and their foreground text, checked across all four
-themes, remains above 4.5:1 (AA).
+`activityBar.background` and `panel.background` still tint from the standard
+dark blue `#1C3C55` in Picard, Troi, and Crusher. Data's darker workbench
+surfaces are the exception described above; status/input/widget surfaces retain
+their existing warm tint because their neutral starlight text already exceeds
+6:1 contrast.
 
 ## Theme palette reference page
 
 `theme-palettes.html` is a generated, self-contained page (open directly in a
 browser, no build step) with an interactive mock VS Code window styled from
-each theme's real color values — activity bar, sidebar, tabs, editor with
-syntax-highlighted sample code, status bar, and badges. A theme selector
+each theme's real color values — activity bar, sidebar, Modern UI tab roles,
+editor with syntax-highlighted sample code, status bar, and badges. A theme selector
 switches between the base theme and all four character themes. Clicking any
 element in the mock-up (or any color in the palette legend below it) opens an
 inspector showing exactly which color role(s) it uses, with a live color
@@ -136,10 +188,12 @@ the approved LCARS palette.
 
 This is the approved LCARS palette. Each RGB color is used exactly as provided;
 where VS Code supports alpha, opacity is used only to soften an overlay without
-introducing a new base hue. No colors were lightened, darkened, or otherwise
-replaced. The accessibility work changes which approved color is assigned to
-each VS Code role so text remains readable on the dark-blue and dark-gray
-surfaces.
+introducing a new base hue. Modern UI action backgrounds are the corresponding
+opaque composites required by VS Code for overlay controls; they are not new
+palette hues. No source syntax colors or diagnostic colors were lightened,
+darkened, or otherwise replaced. The accessibility work changes which approved
+color is assigned to each VS Code role so text remains readable on the dark-blue
+and dark-gray surfaces.
 
 ## Marketplace tokenization reference
 
@@ -271,10 +325,10 @@ cannot assign an individual color to either action.
 
 | Color | Hex | Current usage |
 | --- | --- | --- |
-| African violet | `#BAA4E5` | Active selections, suggestion selections, secondary buttons, keywords, function/method tokens, decorators, PHP visibility/storage modifiers, TypeScript/JavaScript class keywords, HTML/XML attribute names, terminal magenta. |
+| African violet | `#BAA4E5` | Active selections, suggestion selections, secondary buttons, keywords, function/method tokens, decorators, PHP visibility/storage modifiers, TypeScript/JavaScript class keywords, HTML/XML attribute names, Troi tab modified borders, terminal magenta. |
 | Almond | `#D29B7F` | Terminal green and untracked Git decorations. |
 | Almond creme | `#FCC19F` | Hovered primary and secondary buttons, active line numbers, HTML/XML attribute values, string and regular-expression tokens, bright terminal green. |
-| Barley | `#EDB378` | Activity-bar icons, sidebar and panel headings, type tokens, named constants, enum members, library functions/constants/variables, labels, 25% translucent Explorer hover background, and bright terminal yellow. |
+| Barley | `#EDB378` | Activity-bar icons, sidebar and panel headings, type tokens, named constants, enum members, library functions/constants/variables, labels, LCARS/Data tab modified borders, 25% translucent Explorer hover background, and bright terminal yellow. |
 | Bluey | `#8899FF` | Word-highlight overview-ruler marker. |
 | Brown | `#895129` | Bracket-match background. |
 | Butterscotch | `#EA9C72` | Modified Git decorations and warning squiggle. |
@@ -282,22 +336,22 @@ cannot assign an individual color to either action.
 | Dusty mauve | `#9D698A` | Selection-highlight overview-ruler marker. |
 | Lilac | `#8A72A7` | Strong word-highlight overview-ruler marker and hint squiggle. |
 | Mars | `#FF2200` | Error squiggle and error indicator only; never normal text. |
-| Orange | `#EB943A` | Active links, panel and status borders, the base active-tab background/stripe, and terminal yellow. |
+| Orange | `#EB943A` | Active links, the base active-tab stripe, and terminal yellow. |
 | Red | `#CF4F4F` | Approved palette color reserved for future diagnostic or decorative use; not assigned to a current tab role. |
 | Subdued sienna | `#C47D69` | Modified overview-ruler marker. |
 | True mauve | `#C082A9` | Badge backgrounds with dark-blue foreground text. |
 | Blue | `#37A6D1` | Informational squiggle and inserted-diff border. |
-| Bright blue | `#41C4F7` | Focus rings, links, input/widget borders, primary-button borders, active Explorer selection icons, operators, storage/modifier/variable/parameter tokens, export and PHP function keywords, numeric constants, HTML/XML tag names, terminal blue, and terminal cyan. |
+| Bright blue | `#41C4F7` | Focus rings, links, input/widget borders, primary-button borders, active Explorer selection icons, Crusher tab modified borders, operators, storage/modifier/variable/parameter tokens, export and PHP function keywords, numeric constants, HTML/XML tag names, terminal blue, and terminal cyan. |
 | Dark blue | `#1C3C55` | Activity bar, panel, title-bar, inactive-tab, primary-button, and active Explorer selection backgrounds. |
 | Dark gray | `#2F3749` | Status bar, widgets, inputs, dropdowns, and line-highlight backgrounds. |
-| Deep dark blue | `#09131A` | Editor and terminal backgrounds (dark blue darkened ~69%, tinted per character theme). |
-| Deep dark gray | `#212633` | Sidebar background (dark gray darkened ~30%, tinted per character theme). |
+| Deep dark blue | `#09131A` | Editor, terminal, and editor tab-strip backgrounds in all five themes (dark blue darkened ~69%). |
+| Deep dark gray | `#212633` | Base LCARS sidebar background (dark gray darkened ~30%); character themes use identity-tinted sidebar surfaces. |
 | Ghost gray | `#D2D5DF` | Secondary text, inactive labels, language variables, namespaces/modules, class names, library types/classes, HTML/XML tag punctuation, terminal white, and inactive tabs. |
 | Light gray | `#9EA5BA` | Comments, placeholders, and inactive line numbers. |
 | Light orange-red | `#FF6753` | Added-line gutter indicator only; never normal text. |
 | Medium dark blue | `#2A7193` | Minimap background and hovered primary buttons. |
 | Medium dark gray | `#52596E` | Hover states, section headers, inactive selections, and indent guides. |
 | Orange-red | `#E7442A` | Deleted-line gutter and removed-diff border. |
-| Pale orange-red | `#FF977B` | Error text, invalid tokens, storage-type declaration tokens, deleted-resource text, editor cursor, headings, and terminal red. |
+| Pale orange-red | `#FF977B` | Error text, invalid tokens, storage-type declaration tokens, Picard tab modified borders, deleted-resource text, editor cursor, headings, and terminal red. |
 | Primary gray | `#6D748C` | Whitespace markers and bright terminal black. |
 | Starlight | `#F3F4F7` | Main editor, object properties, buttons, sidebar, widget, terminal, tab, title-bar, status-bar, and Explorer hover text. |
