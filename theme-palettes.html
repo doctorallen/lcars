@@ -100,11 +100,13 @@
   .mock-file-item.inactive-selected { background: var(--c-list-inactiveSelectionBackground); color: var(--c-list-inactiveSelectionForeground); }
   .mock-editor-group { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--c-editor-background); }
   .mock-tabs {
-    display: flex; align-items: flex-end; background: var(--c-editor-background);
+    display: flex; align-items: flex-end; gap: 8px; padding: 8px 8px 0;
+    background: var(--c-editor-background);
     flex-shrink: 0; cursor: pointer;
   }
   .mock-tab {
-    padding: 7px 16px; font-size: 0.78rem;
+    padding: 5px 14px; font-size: 0.78rem; border-radius: 8px;
+    border-top: 2px solid transparent; border-bottom: 2px solid transparent;
     background: var(--c-modernEditorTab-inactiveBackground); color: var(--c-tab-inactiveForeground);
   }
   .mock-tab:hover {

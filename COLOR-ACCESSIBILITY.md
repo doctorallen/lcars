@@ -44,8 +44,9 @@ separators (`sideBar.border`, `panel.border`, `surface.border`,
 VS Code controls tab geometry in the workbench; color themes only provide color
 roles. The focused, unfocused, selected, inactive, and hover tab roles are all
 set explicitly in each theme so the workbench does not fall back to a stale or
-unrelated tab color. The palette reference page keeps the tab mock-up
-rectangular and delegates rounded-corner behavior to VS Code itself.
+unrelated tab color. The palette reference page uses a compact rounded
+approximation of the Modern UI tabs, while the live workbench delegates the
+exact radius, padding, spacing, shadows, and pill geometry to VS Code itself.
 
 ## VS Code Modern UI tab roles
 
