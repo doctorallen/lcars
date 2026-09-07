@@ -2,10 +2,12 @@
 
 ## Scope
 
-This is the approved LCARS palette. Each hexadecimal value is used exactly as
-provided; no colors were lightened, darkened, or otherwise replaced. The
-accessibility work changes which approved color is assigned to each VS Code
-role so text remains readable on the dark-blue and dark-gray surfaces.
+This is the approved LCARS palette. Each RGB color is used exactly as provided;
+where VS Code supports alpha, opacity is used only to soften an overlay without
+introducing a new base hue. No colors were lightened, darkened, or otherwise
+replaced. The accessibility work changes which approved color is assigned to
+each VS Code role so text remains readable on the dark-blue and dark-gray
+surfaces.
 
 ## Accessibility role changes
 
@@ -27,6 +29,8 @@ role so text remains readable on the dark-blue and dark-gray surfaces.
 | HTML/XML attribute names | Barley `#EDB378` | African violet `#BAA4E5` | Removes the concentration of warm tones in Angular bindings while preserving a 5.22:1 contrast ratio on the editor background. |
 | HTML/XML attribute values | Almond creme `#FCC19F` | Ghost gray `#D2D5DF` | Separates literal values from names and bindings, reducing warm visual weight in template-heavy files. |
 | HTML/XML attribute values | Ghost gray `#D2D5DF` | Almond creme `#FCC19F` | Restores a visible value accent after the neutral assignment made Angular templates too monochrome; attribute names remain African violet. |
+| Primary button text/background | Dark blue `#1C3C55` / bright blue `#41C4F7` | Starlight `#F3F4F7` / dark blue `#1C3C55` | VS Code applies 40% opacity to disabled buttons; a light foreground remains more readable while the bright-blue border preserves focus and LCARS emphasis. |
+| Active editor selection | African violet `#BAA4E5` with dark-blue text `#1C3C55` | Dirty mauve `#7A506D` at 25% opacity with starlight text `#F3F4F7` | Makes the lavender selection more visible while allowing the bright syntax colors to remain readable; the resulting starlight contrast is approximately 9.3:1 on the editor surface. |
 
 Mars red `#FF2200`, butterscotch `#EA9C72`, light orange-red `#FF6753`, and
 orange-red `#E7442A` remain in the theme as non-text diagnostic colors:
@@ -50,6 +54,7 @@ cannot assign an individual color to either action.
 | Dark blue `#1C3C55` | African violet `#BAA4E5` | 5.22:1 | AA |
 | Dark blue `#1C3C55` | Bright blue `#41C4F7` | 5.73:1 | AA |
 | Barley `#EDB378` | Dark gray `#2F3749` | 6.42:1 | AA |
+| Starlight `#F3F4F7` | 25% dirty mauve `#7A506D` over dark blue `#1C3C55` | approximately 9.3:1 | AAA |
 
 ## Approved palette and usage
 
@@ -62,7 +67,7 @@ cannot assign an individual color to either action.
 | Bluey | `#8899FF` | Word-highlight overview-ruler marker. |
 | Brown | `#895129` | Bracket-match background. |
 | Butterscotch | `#EA9C72` | Modified Git decorations and warning squiggle. |
-| Dirty mauve | `#7A506D` | Find-match overview-ruler marker. |
+| Dirty mauve | `#7A506D` | 25% opacity active editor selection overlay and find-match overview-ruler marker. |
 | Dusty mauve | `#9D698A` | Selection-highlight overview-ruler marker. |
 | Lilac | `#8A72A7` | Strong word-highlight overview-ruler marker and hint squiggle. |
 | Mars | `#FF2200` | Error squiggle and error indicator only; never normal text. |
@@ -71,15 +76,15 @@ cannot assign an individual color to either action.
 | Subdued sienna | `#C47D69` | Modified overview-ruler marker. |
 | True mauve | `#C082A9` | Badge backgrounds with dark-blue foreground text. |
 | Blue | `#37A6D1` | Informational squiggle and inserted-diff border. |
-| Bright blue | `#41C4F7` | Focus rings, links, input/widget borders, primary buttons, keywords/storage tokens, HTML/XML tag names, terminal blue, and terminal cyan. |
-| Dark blue | `#1C3C55` | Editor, terminal, title-bar, panel, inactive-tab, and primary-button foreground backgrounds. |
+| Bright blue | `#41C4F7` | Focus rings, links, input/widget borders, primary-button borders, keywords/storage tokens, HTML/XML tag names, terminal blue, and terminal cyan. |
+| Dark blue | `#1C3C55` | Editor, terminal, title-bar, panel, inactive-tab, and primary-button backgrounds. |
 | Dark gray | `#2F3749` | Sidebar, status bar, widgets, inputs, dropdowns, and line-highlight backgrounds. |
 | Ghost gray | `#D2D5DF` | Secondary text, inactive labels, HTML/XML tag punctuation, terminal white, and inactive tabs. |
 | Light gray | `#9EA5BA` | Comments, placeholders, and inactive line numbers. |
 | Light orange-red | `#FF6753` | Added-line gutter indicator only; never normal text. |
-| Medium dark blue | `#2A7193` | Minimap background. |
+| Medium dark blue | `#2A7193` | Minimap background and hovered primary buttons. |
 | Medium dark gray | `#52596E` | Active tabs, hover states, section headers, inactive selections, and indent guides. |
 | Orange-red | `#E7442A` | Deleted-line gutter and removed-diff border. |
 | Pale orange-red | `#FF977B` | Error text, invalid tokens, deleted-resource text, editor cursor, headings, and terminal red. |
 | Primary gray | `#6D748C` | Whitespace markers and bright terminal black. |
-| Starlight | `#F3F4F7` | Main editor, sidebar, widget, terminal, tab, title-bar, and status-bar text. |
+| Starlight | `#F3F4F7` | Main editor, buttons, sidebar, widget, terminal, tab, title-bar, and status-bar text. |
