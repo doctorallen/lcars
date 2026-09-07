@@ -1,0 +1,12 @@
+@if (message()) {
+  <aside
+    class="alert-banner"
+    [class.alert-banner--critical]="severity() === 'critical'"
+    [class.alert-banner--warning]="severity() === 'warning'"
+    role="alert"
+  >
+    <span class="alert-banner__severity">{{ severity() | uppercase }}</span>
+    <span class="alert-banner__message">{{ message() }}</span>
+    <button type="button" (click)="dismissed.emit()">Dismiss</button>
+  </aside>
+}

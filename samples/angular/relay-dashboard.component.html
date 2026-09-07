@@ -1,0 +1,59 @@
+<main class="relay-dashboard" [attr.data-channel]="selectedChannel()">
+  <header class="relay-dashboard__header">
+    <div>
+      <p class="relay-dashboard__eyebrow">Channel {{ selectedChannel() }} connected</p>
+      <h1>{{ relayName() }}</h1>
+    </div>
+    <div class="relay-dashboard__status">
+      <time [attr.datetime]="lastUpdated().toISOString()">
+        Updated {{ lastUpdated() | date: 'HH:mm:ss' }}
+      </time>
+      <span aria-live="polite">{{ acknowledgementCount() }} acknowledged</span>
+      <button type="button" (click)="refresh()">Refresh telemetry</button>
+    </div>
+  </header>
+
+  @if (alertMessage()) {
+    <lcars-alert-banner
+      [message]="alertMessage()"
+      [severity]="criticalReadings().length > 0 ? 'critical' : 'warning'"
+      (dismissed)="dismissAlert()"
+    />
+  }
+
+  <section aria-labelledby="telemetry-title">
+    <div class="section-heading">
+      <h2 id="telemetry-title">Telemetry</h2>
+      <span>Cycle {{ snapshot().cycle }} / {{ readings().length }} readings</span>
+    </div>
+
+    <div class="telemetry-grid">
+      @for (reading of readings(); track reading.id) {
+        <lcars-telemetry-card
+          [reading]="reading"
+          (acknowledged)="acknowledge($event)"
+        />
+      } @empty {
+        <p>No telemetry readings available.</p>
+      }
+    </div>
+  </section>
+
+  <footer class="relay-dashboard__footer">
+    <span>
+      Last acknowledged:
+      {{ lastAcknowledged()?.label ?? 'None' }}
+    </span>
+    <span>Response channel</span>
+    @for (channel of channels; track channel) {
+      <button
+        type="button"
+        [class.is-active]="selectedChannel() === channel"
+        [attr.aria-pressed]="selectedChannel() === channel"
+        (click)="selectChannel(channel)"
+      >
+        {{ channel | uppercase }}
+      </button>
+    }
+  </footer>
+</main>

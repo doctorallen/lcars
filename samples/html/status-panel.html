@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Relay Status</title>
+    <link rel="stylesheet" href="../css/status-panel.css">
+  </head>
+  <body>
+    <main class="status-panel" data-state="nominal">
+      <header>
+        <p aria-live="polite">Channel 7 connected</p>
+        <h1 class="status-panel__heading">Neon Relay</h1>
+      </header>
+      <section aria-labelledby="telemetry-title">
+        <h2 id="telemetry-title">Telemetry</h2>
+        <dl>
+          <dt>Signal strength</dt>
+          <dd><meter min="0" max="100" value="86">86%</meter></dd>
+          <dt>Last update</dt>
+          <dd><time datetime="2026-09-06T21:30:00Z">just now</time></dd>
+        </dl>
+      </section>
+      <form>
+        <label>
+          Response channel
+          <select name="channel">
+            <option value="alpha">Alpha</option>
+            <option value="beta" selected>Beta</option>
+          </select>
+        </label>
+        <button type="submit">Acknowledge signal</button>
+      </form>
+    </main>
+    <template id="warning-template">
+      <p role="alert">A relay warning needs review.</p>
+    </template>
+    <script type="module">
+      const panel = document.querySelector('.status-panel');
+      panel?.addEventListener('submit', (event) => event.preventDefault());
+    </script>
+  </body>
+</html>

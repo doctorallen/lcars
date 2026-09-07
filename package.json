@@ -1,0 +1,22 @@
+{
+  "name": "esper-lcars",
+  "displayName": "LCARS",
+  "publisher": "esperinnovations",
+  "description": "An LCARS-inspired high-contrast color theme for Visual Studio Code.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.136.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "LCARS",
+        "uiTheme": "vs-dark",
+        "path": "./themes/LCARS-color-theme.json"
+      }
+    ]
+  }
+}

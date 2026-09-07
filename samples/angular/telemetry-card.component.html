@@ -1,0 +1,40 @@
+<article
+  class="telemetry-card"
+  [attr.data-level]="reading().level"
+  [class.telemetry-card--critical]="reading().level === 'critical'"
+>
+  <header class="telemetry-card__header">
+    <span class="telemetry-card__source">{{ reading().source }}</span>
+    <span class="telemetry-card__level">{{ reading().level | uppercase }}</span>
+    <span class="telemetry-card__trend">{{ reading().trend | uppercase }}</span>
+  </header>
+
+  <h2>{{ reading().label }}</h2>
+  <meter
+    min="0"
+    max="100"
+    [value]="reading().value * 100"
+    [attr.aria-label]="reading().label"
+  >
+    {{ percentage() }}
+  </meter>
+
+  <dl>
+    <div>
+      <dt>Reading</dt>
+      <dd>{{ percentage() }}</dd>
+    </div>
+    <div>
+      <dt>Updated</dt>
+      <dd>{{ reading().timestamp | date: 'HH:mm:ss' }}</dd>
+    </div>
+  </dl>
+
+  <button
+    type="button"
+    [attr.aria-label]="actionLabel()"
+    (click)="acknowledge()"
+  >
+    Acknowledge
+  </button>
+</article>

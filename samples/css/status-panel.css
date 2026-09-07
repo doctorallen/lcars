@@ -1,0 +1,56 @@
+:root {
+  --panel: #1c3c55;
+  --border: #41c4f7;
+  --accent: #edb378;
+  --danger: #ff977b;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.status-panel {
+  display: grid;
+  gap: 1rem;
+  max-width: 42rem;
+  padding: clamp(1rem, 3vw, 2rem);
+  color: var(--accent);
+  background: linear-gradient(135deg, var(--panel), #2f3749);
+  border: 2px solid var(--border);
+  border-radius: 1.5rem 0 1.5rem 0;
+}
+
+.status-panel[data-state='critical'] {
+  --accent: var(--danger);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.status-panel__heading::after {
+  display: block;
+  width: 5rem;
+  height: 0.25rem;
+  margin-top: 0.5rem;
+  content: '';
+  background: currentColor;
+}
+
+.status-panel button:hover,
+.status-panel button:focus-visible {
+  color: var(--panel);
+  background: var(--border);
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (width <= 600px) {
+  .status-panel {
+    border-radius: 0;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    filter: brightness(1.15);
+  }
+}
