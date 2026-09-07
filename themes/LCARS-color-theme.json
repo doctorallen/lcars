@@ -42,8 +42,10 @@
     "sideBar.border": "#41C4F7",
     "list.activeSelectionBackground": "#BAA4E5",
     "list.activeSelectionForeground": "#1C3C55",
+    "list.activeSelectionIconForeground": "#1C3C55",
     "list.inactiveSelectionBackground": "#52596E",
     "list.inactiveSelectionForeground": "#F3F4F7",
+    "list.inactiveSelectionIconForeground": "#D2D5DF",
     "list.hoverBackground": "#52596E",
     "list.hoverForeground": "#F3F4F7",
     "list.focusOutline": "#41C4F7",
@@ -141,6 +143,46 @@
       "scope": ["keyword", "storage", "storage.type", "storage.modifier"],
       "settings": {
         "foreground": "#41C4F7"
+      }
+    },
+    {
+      "name": "PHP visibility and storage modifiers",
+      "scope": [
+        "storage.modifier.php",
+        "storage.modifier.visibility.php"
+      ],
+      "settings": {
+        "foreground": "#BAA4E5"
+      }
+    },
+    {
+      "name": "PHP function declarations",
+      "scope": [
+        "storage.type.function.php",
+        "storage.type.function.arrow.php"
+      ],
+      "settings": {
+        "foreground": "#41C4F7"
+      }
+    },
+    {
+      "name": "TypeScript export keywords",
+      "scope": [
+        "keyword.control.export.ts",
+        "keyword.control.export.js"
+      ],
+      "settings": {
+        "foreground": "#41C4F7"
+      }
+    },
+    {
+      "name": "TypeScript class keywords",
+      "scope": [
+        "storage.type.class.ts",
+        "storage.type.class.js"
+      ],
+      "settings": {
+        "foreground": "#BAA4E5"
       }
     },
     {

@@ -31,6 +31,10 @@ surfaces.
 | HTML/XML attribute values | Ghost gray `#D2D5DF` | Almond creme `#FCC19F` | Restores a visible value accent after the neutral assignment made Angular templates too monochrome; attribute names remain African violet. |
 | Primary button text/background | Dark blue `#1C3C55` / bright blue `#41C4F7` | Starlight `#F3F4F7` / dark blue `#1C3C55` | VS Code applies 40% opacity to disabled buttons; a light foreground remains more readable while the bright-blue border preserves focus and LCARS emphasis. |
 | Active editor selection | African violet `#BAA4E5` with dark-blue text `#1C3C55` | Dirty mauve `#7A506D` at 25% opacity with starlight text `#F3F4F7` | Makes the lavender selection more visible while allowing the bright syntax colors to remain readable; the resulting starlight contrast is approximately 9.3:1 on the editor surface. |
+| Active Explorer selection icons | Bright blue `#41C4F7` | Dark blue `#1C3C55` | Aligns file-type icons with the active filename and provides 5.22:1 contrast on the African-violet selection background. |
+| PHP visibility and storage modifiers | Bright blue `#41C4F7` | African violet `#BAA4E5` | Separates `public`, `private`, `protected`, `readonly`, and related modifiers from the bright-blue `function` keyword. |
+| TypeScript/JavaScript class keywords | Bright blue `#41C4F7` | Barley `#EDB378` | Aligns `class` with the class name while keeping `export` in the bright-blue keyword family. |
+| TypeScript/JavaScript class keywords | Barley `#EDB378` | African violet `#BAA4E5` | Separates the `class` keyword from the barley class name while keeping `export` bright blue. |
 
 Mars red `#FF2200`, butterscotch `#EA9C72`, light orange-red `#FF6753`, and
 orange-red `#E7442A` remain in the theme as non-text diagnostic colors:
@@ -60,7 +64,7 @@ cannot assign an individual color to either action.
 
 | Color | Hex | Current usage |
 | --- | --- | --- |
-| African violet | `#BAA4E5` | Active selections, suggestion selections, secondary buttons, function/method tokens, HTML/XML attribute names, terminal magenta. |
+| African violet | `#BAA4E5` | Active selections, suggestion selections, secondary buttons, function/method tokens, PHP visibility/storage modifiers, TypeScript/JavaScript class keywords, HTML/XML attribute names, terminal magenta. |
 | Almond | `#D29B7F` | Terminal green and untracked Git decorations. |
 | Almond creme | `#FCC19F` | Hovered primary and secondary buttons, active line numbers, HTML/XML attribute values, string tokens, bright terminal green. |
 | Barley | `#EDB378` | Activity-bar icons, sidebar and panel headings, type/class tokens, bright terminal yellow. |
@@ -77,7 +81,7 @@ cannot assign an individual color to either action.
 | True mauve | `#C082A9` | Badge backgrounds with dark-blue foreground text. |
 | Blue | `#37A6D1` | Informational squiggle and inserted-diff border. |
 | Bright blue | `#41C4F7` | Focus rings, links, input/widget borders, primary-button borders, keywords/storage tokens, HTML/XML tag names, terminal blue, and terminal cyan. |
-| Dark blue | `#1C3C55` | Editor, terminal, title-bar, panel, inactive-tab, and primary-button backgrounds. |
+| Dark blue | `#1C3C55` | Editor, terminal, title-bar, panel, inactive-tab, primary-button backgrounds, and active Explorer selection icons. |
 | Dark gray | `#2F3749` | Sidebar, status bar, widgets, inputs, dropdowns, and line-highlight backgrounds. |
 | Ghost gray | `#D2D5DF` | Secondary text, inactive labels, HTML/XML tag punctuation, terminal white, and inactive tabs. |
 | Light gray | `#9EA5BA` | Comments, placeholders, and inactive line numbers. |
