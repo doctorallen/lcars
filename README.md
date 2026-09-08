@@ -5,6 +5,12 @@ An LCARS-inspired high-contrast dark color theme for Visual Studio Code.
 The root `COLOR-ACCESSIBILITY.md` file records the approved palette, its theme
 roles, and the accessibility rationale for each assignment.
 
+The Problems, Output, Debug Console, Ports, and related panel content use the
+same dark surface as the editor and terminal. Panel section headers retain
+each theme's identity color through the supported
+`panelSectionHeader.*` roles; VS Code's Modern UI top panel strip shares the
+native `panel.background` role.
+
 ## Q generated theme
 
 Select **Q** from **Preferences: Color Theme** to enable the runtime-generated

@@ -56,7 +56,8 @@ lavender `#BAA4E5` with dark-blue `#1C3C55` foreground text (5.22:1 contrast).
 
 Each theme rebrands the main workbench chrome to its primary color, so the
 identity is visible in the UI around the editor: `activityBar.foreground`
-(activity-bar icons), `sideBarTitle.foreground`, `panelTitle.activeForeground`,
+(activity-bar icons), `sideBarTitle.foreground`,
+`panelTitle.activeForeground`/`panelSectionHeader.foreground`,
 `badge.background`, `activityBarBadge.background`, `button.secondaryBackground`,
 `editorSuggestWidget.selectedBackground`, `editorBracketMatch.border`,
 `tab.activeBorderTop`, `textLink.activeForeground`, and
@@ -143,20 +144,20 @@ the former, while the border identifies the latter.
 Surface backgrounds are tinted the same way: each neutral base color (dark
 blue `#1C3C55`, dark gray `#2F3749`, medium dark gray `#52596E`) is
 hue-shifted toward the theme's primary accent so the activity bar, sidebar,
-panel, status bar, title bar, tabs, dropdowns, inputs, and editor widgets all
-carry a clearly visible color cast instead of staying neutral gray/blue in
-every theme. Rather than a flat low-opacity blend (which only produced a
-faint cast before the foreground text collided with it), each surface is
-built by blending 40–45% of the primary accent into the neutral base and then
-darkening the result only as much as needed to keep its foreground text
-readable:
+panel headers, status bar, title bar, tabs, dropdowns, inputs, and editor
+widgets all carry a clearly visible color cast instead of staying neutral
+gray/blue in every theme. Rather than a flat low-opacity blend (which only
+produced a faint cast before the foreground text collided with it), each
+surface is built by blending 40–45% of the primary accent into the neutral
+base and then darkening the result only as much as needed to keep its
+foreground text readable:
 
 - Surfaces that also host identity-colored icons/titles
-  (`activityBar.background`, `sideBar.background`, `panel.background`, which
-  carry `activityBar.foreground`, `sideBarTitle.foreground`, and
-  `panelTitle.activeForeground` in the primary accent color) use a 40% hue
-  blend, darkened until contrast against that same primary color is at least
-  4.6:1.
+  (`activityBar.background`, `sideBar.background`,
+  `panelSectionHeader.background`, which carry `activityBar.foreground`,
+  `sideBarTitle.foreground`, and `panelSectionHeader.foreground` in the
+  primary accent color) use a 40% hue blend, darkened until contrast against
+  that same primary color is at least 4.6:1.
 - Surfaces whose text stays neutral starlight (`statusBar.background`,
   `titleBar.activeBackground`/`inactiveBackground`,
   `tab.inactiveBackground`/`unfocusedInactiveBackground`,
@@ -167,15 +168,18 @@ readable:
   contrast against starlight text is at least 6:1, since white text
   tolerates a richer, darker-saturated background.
 
-`editor.background`, `terminal.background`, and the editor tab strip use the
-same deep dark blue in every theme. This keeps the actual code surface
+`editor.background`, `terminal.background`, the editor tab strip, and panel
+content use the same deep dark blue in every theme. This keeps code, terminal,
+Problems, Output, Debug Console, Ports, and similar panel content visually
 consistent while allowing each character variant to retain its identity on the
-sidebar, activity bar, panel, title bar, tabs, and other workbench chrome. The
-shared editor surface stays purely derived from the approved dark neutrals:
+sidebar, activity bar, panel headers, title bar, tabs, and other workbench
+chrome. The shared editor surface stays purely derived from the approved dark
+neutrals:
 
 - **Deep dark blue** `#09131A` — dark blue `#1C3C55` darkened ~69% —
-  used for `editor.background`, `terminal.background`, and
-  `editorGroupHeader.tabsBackground` in all five themes.
+  used for `editor.background`, `terminal.background`,
+  `editorGroupHeader.tabsBackground`, `panel.background`, and
+  `outputView.background` in every fixed theme.
 - **Deep dark gray** `#212633` — dark gray `#2F3749` darkened ~30% —
   used for `sideBar.background` in the base LCARS theme.
 
@@ -187,24 +191,49 @@ surface:
   highlighting therefore has the same dark contrast target in every variant.
 - `sideBar.background` remains tinted for Picard `#5A3D3A`, Troi `#433E56`,
   Data `#42392D`, and Crusher `#214C61`. Data also uses `#42392D` for its
-  activity bar, panel, title bar, and inactive tab surfaces; this raises the
-  barley and ghost-gray text contrast on those surfaces to at least 5.8:1.
+  activity bar, panel section header, title bar, and inactive tab surfaces;
+  this raises the barley and ghost-gray text contrast on those surfaces to at
+  least 5.8:1.
 - Data's suggestion-widget match text uses starlight `#F3F4F7` rather than the
   lower-contrast almond creme so highlighted results remain readable on its
   warm widget surface.
 
-`activityBar.background` and `panel.background` still tint from the standard
-dark blue `#1C3C55` in Picard, Troi, and Crusher. Data's darker workbench
-surfaces are the exception described above; status/input/widget surfaces retain
-their existing warm tint because their neutral starlight text already exceeds
-6:1 contrast.
+`activityBar.background` and `panelSectionHeader.background` still tint from
+the standard dark blue `#1C3C55` in Picard, Troi, and Crusher. Data's darker
+workbench surfaces are the exception described above; status/input/widget
+surfaces retain their existing warm tint because their neutral starlight text
+already exceeds 6:1 contrast.
+
+## Panel content surfaces
+
+Problems, Output, Debug Console, Ports, and related bottom-panel views use the
+same deep `#09131A` content surface as the editor and terminal. Fixed themes
+set `panel.background`, `outputView.background`, and
+`outputViewStickyScroll.background` to that shared surface. The existing
+theme-specific panel identity is preserved in `panelSectionHeader.background`
+and `panelSectionHeader.foreground`, with the same subdued structural border
+used elsewhere.
+
+The Q generator applies the same split to every generated palette: its panel
+content follows the generated editor background, while
+`panelSectionHeader.*` keeps the generated panel identity pair. The static Q
+fallback mirrors the base LCARS values so the first render is consistent
+before runtime generation.
+
+VS Code 1.136.1 does not expose a separate public background color for the
+top panel composite bar in Modern UI; that native strip shares
+`panel.background`. The supported theme configuration therefore guarantees
+the dark panel content and preserves the identity-colored section-header
+roles (and panel tab accents), while the native top strip follows VS Code's
+shared `panel.background` behavior.
 
 ## Theme palette reference page
 
 `theme-palettes.html` is a generated, self-contained page (open directly in a
 browser, no build step) with an interactive mock VS Code window styled from
 each theme's real color values — activity bar, sidebar, Modern UI tab roles,
-editor with syntax-highlighted sample code, status bar, and badges. A theme selector
+editor with syntax-highlighted sample code, dark panel content with an
+identity-colored header, status bar, and badges. A theme selector
 switches between the base theme, the Q fallback snapshot, and all four character
 themes. Clicking any
 element in the mock-up (or any color in the palette legend below it) opens an
