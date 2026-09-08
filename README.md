@@ -58,3 +58,4 @@ Install the resulting VSIX through **Extensions: Install from VSIX...**.
 Pull requests and pushes to `master` are validated and packaged by GitHub
 Actions. A push to `master` creates a GitHub Release and attaches the VSIX
 when the version in `package.json` has not been released before.
+
