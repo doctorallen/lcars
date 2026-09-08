@@ -2,7 +2,7 @@
   "name": "esper-lcars",
   "displayName": "LCARS",
   "publisher": "esperinnovations",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "LCARS-inspired high-contrast themes for Visual Studio Code, including a generated accessibility-aware Q theme.",
   "main": "./extension.js",
   "repository": {
