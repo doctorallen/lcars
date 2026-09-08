@@ -23,6 +23,9 @@ of which character theme is active, so switching themes only changes the
 No new colors were introduced for the fixed themes and no existing
 text-safe/diagnostic-only distinctions (Mars, orange-red, light orange-red,
 red) were altered. Q is the documented runtime-generated exception below.
+When debugging is active, every theme uses the approved lavender `#BAA4E5`
+status-bar background with dark-blue `#1C3C55` foreground text, which has a
+5.22:1 contrast ratio.
 
 ## Q generated theme
 
@@ -48,7 +51,8 @@ Saved Q snapshots are kept in extension global storage and can be restored
 from the Command Palette without adding separate theme files. Applying a
 snapshot still writes the active Q customization through VS Code's supported
 `workbench.colorCustomizations` and editor customization settings so the live
-workbench can render it.
+workbench can render it. The debugger-active status bar uses the approved
+lavender `#BAA4E5` with dark-blue `#1C3C55` foreground text (5.22:1 contrast).
 
 Each theme rebrands the main workbench chrome to its primary color, so the
 identity is visible in the UI around the editor: `activityBar.foreground`

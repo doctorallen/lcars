@@ -3,6 +3,8 @@
 const MIN_TEXT_CONTRAST = 4.5;
 const DEFAULT_LIGHT_FOREGROUND = "#F3F4F7";
 const DEFAULT_DARK_FOREGROUND = "#14202B";
+const DEBUGGING_STATUS_BACKGROUND = "#BAA4E5";
+const DEBUGGING_STATUS_FOREGROUND = "#1C3C55";
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -606,9 +608,9 @@ function generateQTheme(template, random = Math.random) {
     "statusBar.background": statusBackground,
     "statusBar.foreground": foreground,
     "statusBar.border": structuralBorder,
-    "statusBar.debuggingBackground": primary,
-    "statusBar.debuggingForeground": primaryForeground,
-    "statusBar.debuggingBorder": primary,
+    "statusBar.debuggingBackground": DEBUGGING_STATUS_BACKGROUND,
+    "statusBar.debuggingForeground": DEBUGGING_STATUS_FOREGROUND,
+    "statusBar.debuggingBorder": DEBUGGING_STATUS_BACKGROUND,
     "statusBar.noFolderBackground": statusBackground,
     "statusBar.noFolderForeground": foreground,
     "statusBar.noFolderBorder": structuralBorder,
@@ -749,6 +751,7 @@ function generateQTheme(template, random = Math.random) {
       [warningPair.foreground, warning],
       [successPair.foreground, success],
       [infoPair.foreground, info],
+      [DEBUGGING_STATUS_FOREGROUND, DEBUGGING_STATUS_BACKGROUND],
     ]
   );
 
