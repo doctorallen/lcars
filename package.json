@@ -2,8 +2,9 @@
   "name": "esper-lcars",
   "displayName": "LCARS",
   "publisher": "esperinnovations",
-  "description": "An LCARS-inspired high-contrast color theme for Visual Studio Code.",
   "version": "0.1.0",
+  "description": "LCARS-inspired high-contrast themes for Visual Studio Code, including a generated accessibility-aware Q theme.",
+  "main": "./extension.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/doctorallen/lcars.git"
@@ -20,12 +21,53 @@
   "categories": [
     "Themes"
   ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:lcars.generateQTheme",
+    "onCommand:lcars.saveQTheme",
+    "onCommand:lcars.pickSavedQTheme"
+  ],
   "contributes": {
+    "commands": [
+      {
+        "command": "lcars.generateQTheme",
+        "title": "LCARS: Generate Q Theme",
+        "category": "LCARS"
+      },
+      {
+        "command": "lcars.saveQTheme",
+        "title": "LCARS: Save Current Q Theme",
+        "category": "LCARS"
+      },
+      {
+        "command": "lcars.pickSavedQTheme",
+        "title": "LCARS: Pick Saved Q Theme",
+        "category": "LCARS"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "lcars.generateQTheme"
+        },
+        {
+          "command": "lcars.saveQTheme"
+        },
+        {
+          "command": "lcars.pickSavedQTheme"
+        }
+      ]
+    },
     "themes": [
       {
         "label": "LCARS",
         "uiTheme": "vs-dark",
         "path": "./themes/LCARS-color-theme.json"
+      },
+      {
+        "label": "Q",
+        "uiTheme": "vs-dark",
+        "path": "./themes/Q-color-theme.json"
       },
       {
         "label": "LCARS: Picard",
