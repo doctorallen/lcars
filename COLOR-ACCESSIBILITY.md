@@ -7,7 +7,7 @@ above, each assigning one approved accent as the theme's primary identity
 color for workbench UI chrome — focus rings, links, buttons,
 badges, activity-bar icons, sidebar/panel titles, tabs, and the editor and
 terminal background surfaces. **Code syntax highlighting (`tokenColors` and
-`semanticTokenColors`) is identical across all five themes** — operators,
+`semanticTokenColors`) is identical across the five fixed themes** — operators,
 storage, variables, parameters, tag names, and every other token role keep
 the base theme's bright blue `#41C4F7` (and other syntax colors) regardless
 of which character theme is active, so switching themes only changes the
@@ -20,8 +20,35 @@ of which character theme is active, so switching themes only changes the
 | Data | `themes/LCARS-Data-color-theme.json` | Barley `#EDB378` | 6.20:1 (AA) |
 | Crusher | `themes/LCARS-Crusher-color-theme.json` | Bright blue `#41C4F7` | 5.73:1 (AA) |
 
-No new colors were introduced and no existing text-safe/diagnostic-only
-distinctions (Mars, orange-red, light orange-red, red) were altered.
+No new colors were introduced for the fixed themes and no existing
+text-safe/diagnostic-only distinctions (Mars, orange-red, light orange-red,
+red) were altered. Q is the documented runtime-generated exception below.
+
+## Q generated theme
+
+Q is a runtime-generated exception to the fixed approved palette above. Its
+generator samples new dark surfaces and accent colors, then accepts a
+foreground/background pair only when it reaches WCAG AA normal-text contrast
+of at least 4.5:1. It applies the same constraint to actual code content:
+TextMate and semantic-token foregrounds are regenerated against the Q editor
+background, and selection/hover foregrounds are checked against their
+alpha-composited surfaces.
+
+Q starts from `themes/Q-color-theme.json` as a safe static fallback. When Q is
+active, the extension writes generated values into the theme-scoped
+`workbench.colorCustomizations`, `editor.tokenColorCustomizations`, and
+`editor.semanticTokenColorCustomizations` settings. **Mon Capitan** in the
+status bar and **LCARS: Generate Q Theme** in the Command Palette invoke the
+same generator; other LCARS themes remain unchanged. Runtime syntax colors use
+a shared semantic role palette for comments, keywords, operators, strings,
+numbers, constants, variables, properties, functions, types, markup,
+decorators, and invalid code, so TextMate and semantic-token highlighting
+remain visibly differentiated instead of collapsing into near-white shades.
+Saved Q snapshots are kept in extension global storage and can be restored
+from the Command Palette without adding separate theme files. Applying a
+snapshot still writes the active Q customization through VS Code's supported
+`workbench.colorCustomizations` and editor customization settings so the live
+workbench can render it.
 
 Each theme rebrands the main workbench chrome to its primary color, so the
 identity is visible in the UI around the editor: `activityBar.foreground`
@@ -65,8 +92,11 @@ The two tab families are intentionally independent. In the base LCARS theme,
 non-editor pane tabs such as the Chat tab use the orange
 `modernTab.activeBackground` (`#EB943A`) with dark-blue text, while editor tabs
 use the deep-blue `modernEditorTab.activeBackground` (`#1C3C55`) with
-starlight text. The character variants can use the same split with their own
-identity accent on pane tabs and their darker identity surface on editor tabs.
+starlight text. The base editor tab's bottom active stroke remains orange
+(`tab.activeBorder` = `#EB943A`), while its top stroke is blue
+(`tab.activeBorderTop` = `#41C4F7`). The character variants can use the same
+split with their own identity accent on pane tabs and their darker identity
+surface on editor tabs.
 
 `modernEditorTab.hoverBackground` and the other hover fills use an approved
 accent with transparency. Their `*ActionBackground` counterparts are opaque
@@ -87,7 +117,8 @@ unfocused counterparts only when those legacy roles are supplied through
 
 The user's theme-scoped color customizations therefore repeat each theme's
 active border colors: `tab.activeBorder` supplies the bottom stroke and
-`tab.activeBorderTop` supplies the top stroke. This is a VS Code runtime
+`tab.activeBorderTop` supplies the top stroke. For the base LCARS theme these
+are intentionally different: orange on the bottom and blue on the top. This is a VS Code runtime
 requirement, not a shape override or custom CSS injection; the theme files
 retain the same `tab.*` roles for legacy workbench rendering. The
 implementation follows the official [Modern UI
@@ -170,7 +201,8 @@ their existing warm tint because their neutral starlight text already exceeds
 browser, no build step) with an interactive mock VS Code window styled from
 each theme's real color values — activity bar, sidebar, Modern UI tab roles,
 editor with syntax-highlighted sample code, status bar, and badges. A theme selector
-switches between the base theme and all four character themes. Clicking any
+switches between the base theme, the Q fallback snapshot, and all four character
+themes. Clicking any
 element in the mock-up (or any color in the palette legend below it) opens an
 inspector showing exactly which color role(s) it uses, with a live color
 picker to edit them; editing a palette-legend color updates every role that
@@ -187,14 +219,16 @@ the approved LCARS palette.
 
 ## Scope
 
-This is the approved LCARS palette. Each RGB color is used exactly as provided;
-where VS Code supports alpha, opacity is used only to soften an overlay without
-introducing a new base hue. Modern UI action backgrounds are the corresponding
-opaque composites required by VS Code for overlay controls; they are not new
-palette hues. No source syntax colors or diagnostic colors were lightened,
-darkened, or otherwise replaced. The accessibility work changes which approved
-color is assigned to each VS Code role so text remains readable on the dark-blue
-and dark-gray surfaces.
+This is the approved LCARS palette for the five fixed themes. Each RGB color is
+used exactly as provided; where VS Code supports alpha, opacity is used only to
+soften an overlay without introducing a new base hue. Modern UI action
+backgrounds are the corresponding opaque composites required by VS Code for
+overlay controls; they are not new palette hues. No source syntax colors or
+diagnostic colors were lightened, darkened, or otherwise replaced. The
+accessibility work changes which approved color is assigned to each VS Code
+role so text remains readable on the dark-blue and dark-gray surfaces. Q is
+generated at runtime from independently sampled colors and enforces the
+contrast rules described in the Q section above.
 
 ## Marketplace tokenization reference
 
